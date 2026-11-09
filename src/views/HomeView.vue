@@ -1,9 +1,20 @@
 <script setup lang="ts">
 /**
- * Temporary page: previews the design tokens (step 1a).
+ * Temporary page: previews the design tokens (1a) and base components (1b).
  * It is replaced by the application layout in step 1c.
  */
+import { ref } from 'vue'
+import { ChevronsUpDown, Copy, LogOut, Plus, Settings, Trash2 } from '@lucide/vue'
+
 import { useTheme, type ThemePreference } from '@/shared/composables/useTheme'
+import BaseButton from '@/shared/ui/BaseButton.vue'
+import BaseDropdownMenu from '@/shared/ui/BaseDropdownMenu.vue'
+import BaseDropdownMenuItem from '@/shared/ui/BaseDropdownMenuItem.vue'
+import BaseDropdownMenuLabel from '@/shared/ui/BaseDropdownMenuLabel.vue'
+import BaseField from '@/shared/ui/BaseField.vue'
+import BaseInput from '@/shared/ui/BaseInput.vue'
+import BaseSegmentedControl from '@/shared/ui/BaseSegmentedControl.vue'
+import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
 
 const { preference, resolved } = useTheme()
 
@@ -12,6 +23,26 @@ const themeOptions: { value: ThemePreference; label: string }[] = [
   { value: 'dark', label: 'Sombre' },
   { value: 'auto', label: 'Système' },
 ]
+
+// Demo state for the component previews
+const periodOptions = [
+  { value: '24h', label: '24 h' },
+  { value: '7d', label: '7 j' },
+  { value: '30d', label: '30 j' },
+  { value: '90d', label: '90 j' },
+] as const
+const period = ref<(typeof periodOptions)[number]['value']>('30d')
+
+const siteName = ref('Atelier Nord')
+const domain = ref('atelier nord')
+const domainError = ref('Saisissez un domaine valide, par exemple atelier-nord.example')
+const loading = ref(false)
+const lastAction = ref('—')
+
+function simulateSave() {
+  loading.value = true
+  setTimeout(() => (loading.value = false), 1500)
+}
 
 const groups = [
   {
@@ -77,32 +108,149 @@ const typeScale = [
         </span>
         <div>
           <h1 class="text-base font-semibold tracking-tight">Atollo</h1>
-          <p class="text-xs text-fg-muted">Design tokens — palette Lagon</p>
+          <p class="text-xs text-fg-muted">Design system — palette Lagon</p>
         </div>
       </div>
 
-      <div
-        class="flex rounded-lg border border-line bg-surface p-0.5 shadow-xs"
-        role="radiogroup"
-        aria-label="Thème"
-      >
-        <button
-          v-for="option in themeOptions"
-          :key="option.value"
-          type="button"
-          role="radio"
-          :aria-checked="preference === option.value"
-          class="rounded-md px-3 py-1 text-[13px] text-fg-muted transition-colors hover:text-fg aria-checked:bg-surface-muted aria-checked:font-medium aria-checked:text-fg"
-          @click="preference = option.value"
-        >
-          {{ option.label }}
-        </button>
-      </div>
+      <BaseSegmentedControl v-model="preference" :options="themeOptions" label="Thème" />
     </header>
 
     <p class="mt-2 text-xs text-fg-subtle">
       Thème affiché : <span class="font-mono">{{ resolved }}</span>
     </p>
+
+    <!-- ===================== Composants (1b) ===================== -->
+    <section class="mt-10">
+      <h2 class="text-label">Boutons</h2>
+      <div
+        class="mt-3 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-5"
+      >
+        <BaseButton variant="primary"><Plus aria-hidden="true" />Ajouter un site</BaseButton>
+        <BaseButton>Annuler</BaseButton>
+        <BaseButton variant="ghost">Voir tout</BaseButton>
+        <BaseButton :loading="loading" variant="primary" @click="simulateSave">
+          {{ loading ? 'Enregistrement…' : 'Enregistrer (clic = chargement)' }}
+        </BaseButton>
+        <BaseButton disabled>Désactivé</BaseButton>
+        <BaseButton size="sm">Petit</BaseButton>
+        <BaseButton icon-only aria-label="Paramètres"><Settings aria-hidden="true" /></BaseButton>
+        <BaseButton icon-only variant="ghost" aria-label="Copier">
+          <Copy aria-hidden="true" />
+        </BaseButton>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Contrôle segmenté</h2>
+      <div
+        class="mt-3 flex flex-wrap items-center gap-4 rounded-xl border border-line bg-surface p-5"
+      >
+        <BaseSegmentedControl v-model="period" :options="periodOptions" label="Période" />
+        <span class="text-xs text-fg-muted">
+          Valeur : <span class="font-mono text-fg">{{ period }}</span> — essayez les flèches du
+          clavier
+        </span>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Formulaire</h2>
+      <div class="mt-3 grid gap-5 rounded-xl border border-line bg-surface p-5 sm:grid-cols-2">
+        <BaseField
+          v-slot="{ id, describedBy, invalid }"
+          label="Nom du site"
+          hint="Visible par vous seul."
+        >
+          <BaseInput :id v-model="siteName" :aria-describedby="describedBy" :invalid />
+        </BaseField>
+        <BaseField v-slot="{ id, describedBy, invalid }" label="Domaine" :error="domainError">
+          <BaseInput
+            :id
+            v-model="domain"
+            :aria-describedby="describedBy"
+            :invalid
+            placeholder="exemple.fr"
+            @input="domainError = ''"
+          />
+        </BaseField>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Menu déroulant</h2>
+      <div
+        class="mt-3 flex flex-wrap items-center gap-4 rounded-xl border border-line bg-surface p-5"
+      >
+        <BaseDropdownMenu match-trigger-width>
+          <template #trigger>
+            <button
+              type="button"
+              class="flex w-60 items-center gap-2.5 rounded-lg border border-line bg-surface p-2 text-left shadow-xs transition-colors hover:bg-surface-muted"
+            >
+              <span
+                class="grid size-6 place-items-center rounded-md border border-line bg-surface-muted text-[11px] font-semibold text-fg-muted"
+                >A</span
+              >
+              <span class="flex-1 leading-tight">
+                <span class="block text-[13px] font-medium">Atelier Nord</span>
+                <span class="block text-xs text-fg-muted">atelier-nord.example</span>
+              </span>
+              <ChevronsUpDown class="size-4 text-fg-subtle" aria-hidden="true" />
+            </button>
+          </template>
+          <BaseDropdownMenuLabel>Mes sites</BaseDropdownMenuLabel>
+          <BaseDropdownMenuItem @select="lastAction = 'Atelier Nord'"
+            >Atelier Nord</BaseDropdownMenuItem
+          >
+          <BaseDropdownMenuItem @select="lastAction = 'Studio Brume'"
+            >Studio Brume</BaseDropdownMenuItem
+          >
+          <BaseDropdownMenuItem @select="lastAction = 'La Mie Céleste'">
+            La Mie Céleste
+          </BaseDropdownMenuItem>
+          <BaseDropdownMenuLabel separated>Actions</BaseDropdownMenuLabel>
+          <BaseDropdownMenuItem @select="lastAction = 'Ajouter un site'">
+            <Plus aria-hidden="true" />Ajouter un site
+          </BaseDropdownMenuItem>
+        </BaseDropdownMenu>
+
+        <BaseDropdownMenu align="end">
+          <template #trigger>
+            <BaseButton icon-only aria-label="Options du compte">
+              <Settings aria-hidden="true" />
+            </BaseButton>
+          </template>
+          <BaseDropdownMenuItem @select="lastAction = 'Paramètres'">
+            <Settings aria-hidden="true" />Paramètres
+          </BaseDropdownMenuItem>
+          <BaseDropdownMenuItem danger @select="lastAction = 'Supprimer'">
+            <Trash2 aria-hidden="true" />Supprimer le site
+          </BaseDropdownMenuItem>
+          <BaseDropdownMenuItem disabled>
+            <LogOut aria-hidden="true" />Déconnexion (désactivé)
+          </BaseDropdownMenuItem>
+        </BaseDropdownMenu>
+
+        <span class="text-xs text-fg-muted">
+          Dernière action : <span class="font-mono text-fg">{{ lastAction }}</span>
+        </span>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Chargement (skeleton)</h2>
+      <div
+        class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4"
+      >
+        <div v-for="n in 4" :key="n" class="flex flex-col gap-3 bg-surface p-5">
+          <BaseSkeleton class="h-3 w-24" />
+          <BaseSkeleton class="h-7 w-20" />
+          <BaseSkeleton class="h-3 w-12" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Tokens (1a) ===================== -->
 
     <section v-for="group in groups" :key="group.title" class="mt-10">
       <h2 class="text-label">{{ group.title }}</h2>

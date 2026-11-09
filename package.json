@@ -21,8 +21,10 @@
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
+    "@lucide/vue": "^1.70.0",
     "@vueuse/core": "^15.0.0",
     "pinia": "^4.0.3",
+    "reka-ui": "^2.11.0",
     "vue": "^3.5.42",
     "vue-router": "^5.3.1"
   },
