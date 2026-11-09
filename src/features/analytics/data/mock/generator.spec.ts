@@ -13,9 +13,9 @@ describe('generateDay', () => {
 
   it('gives each site its own traffic', () => {
     const atelier = generateDay('atelier-nord', DAY)
-    const fournil = generateDay('mie-celeste', DAY)
-    expect(atelier.length).toBeGreaterThan(fournil.length * 2)
-    expect(fournil.every((s) => !s.visitorId.startsWith('atelier-nord'))).toBe(true)
+    const bakery = generateDay('mie-celeste', DAY)
+    expect(atelier.length).toBeGreaterThan(bakery.length * 2)
+    expect(bakery.every((s) => !s.visitorId.startsWith('atelier-nord'))).toBe(true)
   })
 
   it('keeps every session internally consistent', () => {

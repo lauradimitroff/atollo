@@ -63,11 +63,11 @@ describe('mock repository consistency', () => {
 
   it('unique visitors never exceed visits, and differ between sites', async () => {
     const atelier = await repo.getKpis(october)
-    const fournil = await repo.getKpis(
+    const bakery = await repo.getKpis(
       queryFor({ preset: 'custom', from: '2026-10-01', to: '2026-10-31' }, 'mie-celeste'),
     )
     expect(atelier.visitors.current).toBeLessThanOrEqual(atelier.visits.current)
-    expect(fournil.visits.current).toBeLessThan(atelier.visits.current / 2)
+    expect(bakery.visits.current).toBeLessThan(atelier.visits.current / 2)
   })
 
   it('keeps realistic values', async () => {

@@ -2,7 +2,9 @@ import type { Site } from './types'
 
 /**
  * Demo workspace sites.
- * Temporary source of truth until the sites store (step 2) and Supabase (step 5).
+ * Fictional businesses on reserved `.example` domains (RFC 2606): they cannot belong
+ * to anyone, so the demo never shows made-up statistics for a real website.
+ * Temporary source of truth until sites are stored per user account.
  */
 export const DEMO_SITES: readonly Site[] = [
   { id: 'atelier-nord', name: 'Atelier Nord', domain: 'atelier-nord.example' },
