@@ -111,6 +111,12 @@ describe('compare', () => {
     expect(changeSentiment('bounceRate', -2)).toBe('good')
     expect(changeSentiment('visits', null)).toBeNull()
   })
+
+  it('stays neutral for a change that rounds to zero', () => {
+    expect(changeSentiment('bounceRate', -0.04)).toBeNull()
+    expect(changeSentiment('visits', 0.0004)).toBeNull()
+    expect(changeSentiment('visits', 0.001)).toBe('good')
+  })
 })
 
 describe('breakdown', () => {

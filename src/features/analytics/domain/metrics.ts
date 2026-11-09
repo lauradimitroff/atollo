@@ -104,9 +104,14 @@ export function compare(current: Summary, previous: Summary): Kpis {
   return kpis
 }
 
-/** Is this change good news? Neutral (null) when there is no change to judge. */
+/**
+ * Is this change good news? Neutral (null) when there is nothing to judge, or when the
+ * change is too small to show once rounded (+0.04 % displays as "0 %").
+ */
 export function changeSentiment(key: MetricKey, change: number | null): 'good' | 'bad' | null {
-  if (change === null || change === 0) return null
+  if (change === null) return null
+  const threshold = METRICS[key].changeUnit === 'points' ? 0.05 : 0.0005
+  if (Math.abs(change) < threshold) return null
   return change > 0 === METRICS[key].higherIsBetter ? 'good' : 'bad'
 }
 

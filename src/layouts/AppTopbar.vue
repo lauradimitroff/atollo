@@ -62,7 +62,7 @@ const rangeLabel = computed(() => formatDateRange(range.value))
     <!-- Full-width second row on phones, inline from `sm` up. -->
     <div
       v-if="isAnalyticsPage"
-      class="order-3 flex w-full items-center gap-3 overflow-x-auto sm:order-2 sm:w-auto"
+      class="order-3 flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 sm:order-2 sm:w-auto"
     >
       <BaseSegmentedControl v-model="presetModel" :options="periodOptions" label="Période" />
       <!-- Announced by screen readers when the period changes. -->
