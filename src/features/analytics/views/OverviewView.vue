@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
-import { CalendarSearch, FilterX } from '@lucide/vue'
+import { computed } from 'vue'
 
-import ChartLoadError from '@/shared/charts/ChartLoadError.vue'
-import BaseButton from '@/shared/ui/BaseButton.vue'
+import { lazyChart } from '@/shared/charts/lazyChart'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
-import EmptyState from '@/shared/ui/EmptyState.vue'
 import ErrorState from '@/shared/ui/ErrorState.vue'
 import BreakdownCard from '../components/BreakdownCard.vue'
 import KpiStrip from '../components/KpiStrip.vue'
+import NoVisitsState from '../components/NoVisitsState.vue'
 import { DEVICES_TABS, LOCATIONS_TABS, PAGES_TABS, SOURCES_TABS } from '../overview-cards'
 import { useAnalyticsQuery } from '../composables/useAnalyticsQuery'
-import { useFilters } from '../composables/useFilters'
 import { usePeriod } from '../composables/usePeriod'
 import { useSelectedMetric } from '../composables/useSelectedMetric'
 import { analytics } from '../data'
@@ -19,22 +16,10 @@ import { METRICS } from '../domain/metrics'
 import { bucketLabels, formatAxis, formatChangeBetween, formatMetric } from '../format'
 
 // The chart pulls ECharts in: loaded as a separate chunk, after the KPIs.
-// If that download fails, retry twice, then show an explicit error instead of a blank space.
-const TimeseriesChart = defineAsyncComponent({
-  loader: () => import('@/shared/charts/TimeseriesChart.vue'),
-  loadingComponent: BaseSkeleton,
-  errorComponent: ChartLoadError,
-  onError: (error, retry, fail, attempts) => {
-    if (attempts <= 2) return retry()
-    // Visible in the browser console: tells whether it is a network or blocker issue.
-    console.error('[Atollo] Le code du graphique n’a pas pu être chargé :', error)
-    fail()
-  },
-})
+const TimeseriesChart = lazyChart(() => import('@/shared/charts/TimeseriesChart.vue'))
 
 const metric = useSelectedMetric()
-const { granularity, range, period, setPreset } = usePeriod()
-const { filters, clear: clearFilters } = useFilters()
+const { granularity, range } = usePeriod()
 
 const kpis = useAnalyticsQuery((q) => analytics.getKpis(q))
 const series = useAnalyticsQuery(
@@ -72,7 +57,6 @@ const periodRunning = computed(() => range.value.end.getTime() > Date.now())
  * replaces them, with the most useful way out (fewer filters, or a longer period).
  */
 const isEmpty = computed(() => kpis.data.value?.visits.current === 0)
-const isFiltered = computed(() => filters.value.length > 0)
 </script>
 
 <template>
@@ -89,26 +73,7 @@ const isFiltered = computed(() => filters.value.length > 0)
       />
       <KpiStrip v-else v-model="metric" :kpis="kpis.data.value" :loading="kpis.loading.value" />
 
-      <EmptyState
-        v-if="isEmpty && isFiltered"
-        bare
-        :icon="FilterX"
-        title="Aucune visite ne correspond à ces filtres"
-        description="Retirez un filtre ou élargissez la période pour retrouver des données."
-      >
-        <BaseButton variant="primary" @click="clearFilters()">Effacer les filtres</BaseButton>
-      </EmptyState>
-      <EmptyState
-        v-else-if="isEmpty"
-        bare
-        :icon="CalendarSearch"
-        title="Aucune visite sur cette période"
-        description="Le site n’a encore reçu aucune visite sur cette période."
-      >
-        <BaseButton v-if="period.preset !== '30d'" variant="primary" @click="setPreset('30d')">
-          Voir les 30 derniers jours
-        </BaseButton>
-      </EmptyState>
+      <NoVisitsState v-if="isEmpty" bare />
 
       <template v-else>
         <div class="flex flex-wrap items-center gap-x-5 gap-y-1 px-5 pt-4 text-xs text-fg-muted">

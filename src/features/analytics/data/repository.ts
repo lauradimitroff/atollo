@@ -2,6 +2,7 @@ import type { Filter } from '../domain/filters'
 import type { DateRange, Granularity } from '../domain/period'
 import type {
   BreakdownRow,
+  ChannelPoint,
   Dimension,
   Kpis,
   MetricComparison,
@@ -46,6 +47,8 @@ export interface AnalyticsRepository {
   getTimeseries(query: AnalyticsQuery, metric: MetricKey): Promise<TimeseriesPoint[]>
   getBreakdown(query: AnalyticsQuery, dimension: Dimension): Promise<BreakdownRow[]>
   getPages(query: AnalyticsQuery): Promise<PageRow[]>
+  /** Visits per acquisition channel over time (current period only). */
+  getChannelTimeseries(query: AnalyticsQuery): Promise<ChannelPoint[]>
   /** Key figures of several sites at once, for the multi-site overview. */
   getSiteSummaries(query: PortfolioQuery, siteIds: readonly string[]): Promise<SiteSummary[]>
 }

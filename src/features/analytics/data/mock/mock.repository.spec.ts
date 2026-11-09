@@ -158,3 +158,17 @@ describe('page behavior', () => {
     expect(pages['/blog/design-tokens']!.exitRate).toBeGreaterThan(pages['/projets']!.exitRate)
   })
 })
+
+describe('channel time series', () => {
+  it('adds up, point by point and channel by channel, to the channel breakdown', async () => {
+    const [points, channels] = await Promise.all([
+      repo.getChannelTimeseries(october),
+      repo.getBreakdown(october, 'channel'),
+    ])
+    expect(points).toHaveLength(31)
+    for (const row of channels) {
+      const total = points.reduce((sum, p) => sum + (p.visits?.[row.key as 'organic'] ?? 0), 0)
+      expect(total).toBe(row.visits)
+    }
+  })
+})

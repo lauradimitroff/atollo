@@ -16,6 +16,8 @@ export interface ChartTokens {
   areaOpacity: number
   up: string
   down: string
+  /** Categorical palette, in order: one color per series. */
+  categorical: string[]
 }
 
 /**
@@ -43,6 +45,7 @@ export function useChartTheme() {
       areaOpacity: Number(v('area-opacity')) || 0.16,
       up: v('up'),
       down: v('down'),
+      categorical: [1, 2, 3, 4, 5, 6].map((n) => v(`cat-${n}`)),
     }
   }
 

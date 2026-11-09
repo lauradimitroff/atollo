@@ -39,6 +39,18 @@
   --accent-soft: rgb(43 143 203 / 0.09);
   --area-opacity: 0.16;
 
+  /*
+   * Categorical palette (one color per series, e.g. traffic channels).
+   * Built around the brand trio, plus the deep navy / violet tones of the identity:
+   * distinct hues, close lightness, so no series shouts louder than another.
+   */
+  --cat-1: #4f5fd6;
+  --cat-2: #2b8fcb;
+  --cat-3: #1fb3a1;
+  --cat-4: #8a63d2;
+  --cat-5: #d2869f;
+  --cat-6: #9aa6c4;
+
   /* Semantic */
   --up: #0f8a5f;
   --down: #e11d48;
@@ -68,6 +80,13 @@
   --accent-soft: rgb(121 191 231 / 0.12);
   --area-opacity: 0.3;
 
+  --cat-1: #8b96f0;
+  --cat-2: #79bfe7;
+  --cat-3: #79e7d8;
+  --cat-4: #b59cf2;
+  --cat-5: #f0a6be;
+  --cat-6: #8e99bd;
+
   --up: #6ee7a8;
   --down: #fb7185;
 
@@ -94,6 +113,13 @@
   --color-grad-a: var(--grad-a);
   --color-grad-b: var(--grad-b);
   --color-grad-c: var(--grad-c);
+
+  --color-cat-1: var(--cat-1);
+  --color-cat-2: var(--cat-2);
+  --color-cat-3: var(--cat-3);
+  --color-cat-4: var(--cat-4);
+  --color-cat-5: var(--cat-5);
+  --color-cat-6: var(--cat-6);
 
   --color-up: var(--up);
   --color-down: var(--down);

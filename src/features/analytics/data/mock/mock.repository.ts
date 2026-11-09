@@ -1,4 +1,11 @@
-import { breakdown, compare, pageStats, summarize, timeseries } from '../../domain/metrics'
+import {
+  breakdown,
+  channelTimeseries,
+  compare,
+  pageStats,
+  summarize,
+  timeseries,
+} from '../../domain/metrics'
 import { applyFilters } from '../../domain/filters'
 import { elapsedRanges, type DateRange } from '../../domain/period'
 import type { AnalyticsQuery, AnalyticsRepository } from '../repository'
@@ -61,6 +68,17 @@ export function createMockRepository({
     async getPages(query) {
       await delay()
       return pageStats(sessions(query, query.range, now()))
+    },
+
+    async getChannelTimeseries(query) {
+      await delay()
+      const clock = now()
+      return channelTimeseries(
+        sessions(query, query.range, clock),
+        query.range,
+        query.granularity,
+        clock,
+      )
     },
 
     async getSiteSummaries(query, siteIds) {

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   breakdown,
+  channelTimeseries,
   bucketStarts,
   changeSentiment,
   compare,
@@ -202,5 +203,27 @@ describe('timeseries', () => {
   it('leaves future buckets empty', () => {
     const points = timeseries(current, previous, 'day', 'visits', new Date(2026, 9, 13, 9))
     expect(points.map((p) => p.current)).toEqual([2, 0, null])
+  })
+})
+
+describe('channelTimeseries', () => {
+  it('counts visits per channel in each bucket and leaves future buckets empty', () => {
+    const range = { start: new Date(2026, 9, 12), end: new Date(2026, 9, 15) }
+    const at = (d: number) => new Date(2026, 9, d, 10).getTime()
+    const points = channelTimeseries(
+      [
+        session({ startedAt: at(12), channel: 'organic' }),
+        session({ startedAt: at(12), channel: 'social' }),
+        session({ startedAt: at(13), channel: 'organic' }),
+      ],
+      range,
+      'day',
+      new Date(2026, 9, 13, 18),
+    )
+    expect(points.map((p) => p.visits && [p.visits.organic, p.visits.social])).toEqual([
+      [1, 1],
+      [1, 0],
+      null,
+    ])
   })
 })

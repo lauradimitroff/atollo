@@ -1,20 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { FileSearch, FilterX } from '@lucide/vue'
 
 import type { SortOrder, SortState } from '@/shared/composables/useTableState'
-import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
-import EmptyState from '@/shared/ui/EmptyState.vue'
 import ErrorState from '@/shared/ui/ErrorState.vue'
+import NoVisitsState from '../components/NoVisitsState.vue'
 import PagesTable, { type PageColumn } from '../components/PagesTable.vue'
 import { useAnalyticsQuery } from '../composables/useAnalyticsQuery'
-import { useFilters } from '../composables/useFilters'
 import { analytics } from '../data'
 
 const pages = useAnalyticsQuery((q) => analytics.getPages(q))
-const { filters, clear: clearFilters } = useFilters()
 
 /**
  * Sort stored in the URL (?sort=exitRate&order=asc), like the period and filters:
@@ -73,23 +69,7 @@ const sort = computed<SortState<PageColumn>>({
       <BaseSkeleton v-for="n in 8" :key="n" class="h-7" />
     </div>
 
-    <EmptyState
-      v-else-if="pages.data.value.length === 0 && filters.length"
-      bare
-      :icon="FilterX"
-      title="Aucune page vue avec ces filtres"
-      description="Retirez un filtre ou élargissez la période pour retrouver des données."
-    >
-      <BaseButton variant="primary" @click="clearFilters()">Effacer les filtres</BaseButton>
-    </EmptyState>
-
-    <EmptyState
-      v-else-if="pages.data.value.length === 0"
-      bare
-      :icon="FileSearch"
-      title="Aucune page vue sur cette période"
-      description="Les pages apparaîtront ici dès les premières visites."
-    />
+    <NoVisitsState v-else-if="pages.data.value.length === 0" bare />
 
     <PagesTable
       v-else

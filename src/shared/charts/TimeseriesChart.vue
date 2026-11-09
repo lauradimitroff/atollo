@@ -223,26 +223,29 @@ const option = computed<ChartOption>(() => {
     </div>
 
     <!-- Same data as a table for screen readers (the SVG is hidden from them). -->
-    <table class="sr-only">
-      <caption>
-        {{
-          title
-        }}
-      </caption>
-      <thead>
-        <tr>
-          <th scope="col">Date</th>
-          <th scope="col">{{ currentLabel }}</th>
-          <th scope="col">{{ previousLabel }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="point in points" :key="point.tooltipLabel">
-          <th scope="row">{{ point.tooltipLabel }}</th>
-          <td>{{ point.current === null ? '—' : formatValue(point.current) }}</td>
-          <td>{{ formatValue(point.previous) }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- sr-only on a wrapper: a <table> ignores the 1px width and would widen the page. -->
+    <div class="sr-only">
+      <table>
+        <caption>
+          {{
+            title
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">{{ currentLabel }}</th>
+            <th scope="col">{{ previousLabel }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="point in points" :key="point.tooltipLabel">
+            <th scope="row">{{ point.tooltipLabel }}</th>
+            <td>{{ point.current === null ? '—' : formatValue(point.current) }}</td>
+            <td>{{ formatValue(point.previous) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>

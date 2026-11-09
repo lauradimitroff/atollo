@@ -13,7 +13,7 @@ import { addDays, addHours, addMonths, addWeeks } from 'date-fns'
 
 import { sessionValue } from './filters'
 import type { DateRange, Granularity } from './period'
-import type { Session } from './types'
+import type { Channel, Session } from './types'
 
 export type MetricKey = 'visitors' | 'visits' | 'pageviews' | 'bounceRate' | 'avgDuration'
 
@@ -177,6 +177,40 @@ export function timeseries(
     current: start > now ? null : summarize(currentGroups[i]!)[metric],
     previous: summarize(previousGroups[i] ?? [])[metric],
   }))
+}
+
+export const CHANNELS: readonly Channel[] = [
+  'organic',
+  'direct',
+  'social',
+  'referral',
+  'campaign',
+  'email',
+]
+
+export interface ChannelPoint {
+  /** Bucket start, epoch milliseconds. */
+  start: number
+  /** Visits per channel; null for a bucket entirely in the future. */
+  visits: Record<Channel, number> | null
+}
+
+/** Visits per channel and per chart point: what feeds the stacked traffic chart. */
+export function channelTimeseries(
+  sessions: readonly Session[],
+  range: DateRange,
+  granularity: Granularity,
+  now: Date = new Date(),
+): ChannelPoint[] {
+  const starts = bucketStarts(range, granularity)
+  const groups = groupByBucket(sessions, starts, range.end)
+
+  return starts.map((start, i) => {
+    if (start > now) return { start: start.getTime(), visits: null }
+    const visits = Object.fromEntries(CHANNELS.map((c) => [c, 0])) as Record<Channel, number>
+    for (const session of groups[i]!) visits[session.channel]++
+    return { start: start.getTime(), visits }
+  })
 }
 
 // ---------------------------------------------------------------------------
