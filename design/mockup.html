@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atollo — Maquette DA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+       * Maquette statique de direction artistique (étape 1).
+       * Les valeurs sont illustratives : aucune donnée n'est calculée ici.
+       */
+      .theme-light {
+        --bg: #fafaf9;
+        --surface: #ffffff;
+        --surface-2: #f5f5f4;
+        --border: #e7e5e4;
+        --border-strong: #d6d3d1;
+        --text: #1c1917;
+        --text-2: #78716c;
+        --text-3: #a8a29e;
+        --signal: #f2542d;
+        --signal-soft: rgba(242, 84, 45, 0.1);
+        --up: #15803d;
+        --down: #c2410c;
+        --bar: rgba(242, 84, 45, 0.09);
+        --shadow: 0 1px 2px rgba(28, 25, 23, 0.04);
+      }
+      .theme-dark {
+        --bg: #0c0c0b;
+        --surface: #151514;
+        --surface-2: #1c1c1a;
+        --border: #262624;
+        --border-strong: #353532;
+        --text: #f5f5f4;
+        --text-2: #a8a29e;
+        --text-3: #6f6a65;
+        --signal: #ff6a3d;
+        --signal-soft: rgba(255, 106, 61, 0.14);
+        --up: #4ade80;
+        --down: #fb923c;
+        --bar: rgba(255, 106, 61, 0.12);
+        --shadow: none;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        font-family: 'Geist', system-ui, sans-serif;
+        background: #e7e5e4;
+        padding: 32px 24px 64px;
+        color: #1c1917;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page-label {
+        max-width: 1280px;
+        margin: 0 auto 12px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #57534e;
+        font-weight: 500;
+      }
+      .page-label:not(:first-child) {
+        margin-top: 48px;
+      }
+
+      /* ---------- App frame ---------- */
+      .frame {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 232px 1fr;
+        min-height: 760px;
+        background: var(--bg);
+        color: var(--text);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.25);
+        font-size: 14px;
+      }
+      .mono {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ---------- Sidebar ---------- */
+      .sidebar {
+        border-right: 1px solid var(--border);
+        padding: 20px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 8px;
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: -0.01em;
+      }
+      .logo-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: var(--text);
+        display: grid;
+        place-items: center;
+      }
+      .site-switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      .favicon {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-2);
+      }
+      .site-switch .name {
+        font-weight: 500;
+        flex: 1;
+        line-height: 1.2;
+      }
+      .site-switch .domain {
+        display: block;
+        font-size: 12px;
+        color: var(--text-2);
+        font-weight: 400;
+      }
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .nav-title {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-3);
+        padding: 0 8px 6px;
+        font-weight: 500;
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 8px;
+        border-radius: 7px;
+        color: var(--text-2);
+        text-decoration: none;
+      }
+      .nav a.active {
+        background: var(--surface-2);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .nav svg {
+        width: 16px;
+        height: 16px;
+        flex: none;
+      }
+      .sidebar-foot {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-top: 1px solid var(--border);
+        padding-top: 16px;
+      }
+      .avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-2);
+      }
+
+      /* ---------- Main ---------- */
+      .main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .topbar {
+        height: 60px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 28px;
+      }
+      .topbar h1 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-right: auto;
+        letter-spacing: -0.01em;
+      }
+      .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-2);
+        margin-left: 12px;
+        font-weight: 400;
+      }
+      .live i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--up);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 20%, transparent);
+      }
+      .segmented {
+        display: flex;
+        padding: 3px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      .segmented button {
+        font: inherit;
+        font-size: 13px;
+        border: 0;
+        background: none;
+        color: var(--text-2);
+        padding: 4px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .segmented button.on {
+        background: var(--surface-2);
+        color: var(--text);
+        font-weight: 500;
+        box-shadow: inset 0 0 0 1px var(--border);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 32px;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        box-shadow: var(--shadow);
+      }
+      .btn svg {
+        width: 15px;
+        height: 15px;
+        color: var(--text-2);
+      }
+      .btn.icon {
+        width: 32px;
+        padding: 0;
+        justify-content: center;
+      }
+
+      .content {
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* ---------- KPI strip + chart (one panel) ---------- */
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-bottom: 1px solid var(--border);
+      }
+      .kpi {
+        position: relative;
+        padding: 18px 20px 20px;
+        border-right: 1px solid var(--border);
+        cursor: pointer;
+        transition: background 0.15s ease-out;
+      }
+      .kpi:last-child {
+        border-right: 0;
+      }
+      .kpi:hover {
+        background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+      }
+      .kpi.active::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        top: -1px;
+        height: 2px;
+        background: var(--signal);
+        border-radius: 0 0 2px 2px;
+      }
+      .kpi-label {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-2);
+        font-weight: 500;
+      }
+      .kpi.active .kpi-label {
+        color: var(--text);
+      }
+      .kpi-value {
+        font-size: 28px;
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        margin: 10px 0 6px;
+        line-height: 1;
+      }
+      .kpi-value small {
+        font-size: 15px;
+        color: var(--text-2);
+        letter-spacing: 0;
+        margin-left: 2px;
+      }
+      .delta {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 12px;
+      }
+      .delta.up {
+        color: var(--up);
+      }
+      .delta.down {
+        color: var(--down);
+      }
+      .delta svg {
+        width: 12px;
+        height: 12px;
+      }
+      .delta-note {
+        color: var(--text-3);
+        font-size: 12px;
+        margin-left: 4px;
+      }
+
+      .chart-head {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 16px 20px 0;
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .chart-head .title {
+        color: var(--text);
+        font-weight: 500;
+        font-size: 13px;
+        margin-right: auto;
+      }
+      .legend {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend .sw {
+        width: 14px;
+        height: 2px;
+        background: var(--signal);
+        border-radius: 2px;
+      }
+      .legend .sw.prev {
+        background: repeating-linear-gradient(
+          90deg,
+          var(--text-3) 0 4px,
+          transparent 4px 7px
+        );
+      }
+      .chart {
+        position: relative;
+        padding: 8px 12px 12px 4px;
+      }
+      .chart svg {
+        display: block;
+        width: 100%;
+        height: 260px;
+        overflow: visible;
+      }
+      .tooltip {
+        position: absolute;
+        pointer-events: none;
+        min-width: 168px;
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 12px;
+        box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transition: opacity 0.12s ease-out;
+      }
+      .tooltip .t-date {
+        color: var(--text-2);
+        margin-bottom: 8px;
+      }
+      .tooltip .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: space-between;
+      }
+      .tooltip .row + .row {
+        margin-top: 4px;
+      }
+      .tooltip .dot {
+        width: 8px;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--signal);
+        margin-right: 6px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .tooltip .dot.prev {
+        background: var(--text-3);
+      }
+
+      /* ---------- Breakdown cards ---------- */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .card-head h2 {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .tabs {
+        display: flex;
+        gap: 14px;
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .tabs .on {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .cols {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px 4px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-3);
+      }
+      .list {
+        padding: 4px 12px 14px;
+      }
+      .bar-row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 8px;
+        border-radius: 6px;
+        isolation: isolate;
+      }
+      .bar-row::before {
+        content: '';
+        position: absolute;
+        inset: 2px auto 2px 0;
+        width: var(--w);
+        background: var(--bar);
+        border-radius: 5px;
+        z-index: -1;
+      }
+      .bar-row .label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .bar-row .val {
+        display: flex;
+        gap: 14px;
+        font-size: 13px;
+      }
+      .bar-row .share {
+        color: var(--text-3);
+        width: 38px;
+        text-align: right;
+      }
+      .path {
+        font-family: 'Geist Mono', monospace;
+        font-size: 13px;
+      }
+
+      /* ================================================================
+       * Palettes candidates. Chaque palette redéfinit l'accent ET les
+       * neutres : un accent froid se marie mal avec des gris chauds.
+       * ================================================================ */
+      [data-palette] .theme-light {
+        --up: #15803d;
+        --down: #dc2626;
+      }
+      [data-palette] .theme-dark {
+        --up: #4ade80;
+        --down: #f87171;
+      }
+
+      /* --- Cobalt : bleu électrique, neutres froids --- */
+      [data-palette='cobalt'] .theme-light {
+        --bg: #f7f8fa;
+        --surface: #ffffff;
+        --surface-2: #f1f3f6;
+        --border: #e4e7ec;
+        --border-strong: #d0d5dd;
+        --text: #101828;
+        --text-2: #667085;
+        --text-3: #98a2b3;
+        --signal: #2b59ff;
+        --bar: rgba(43, 89, 255, 0.08);
+      }
+      [data-palette='cobalt'] .theme-dark {
+        --bg: #0a0b0e;
+        --surface: #111318;
+        --surface-2: #181b22;
+        --border: #23262f;
+        --border-strong: #313541;
+        --text: #f2f4f7;
+        --text-2: #98a2b3;
+        --text-3: #6b7385;
+        --signal: #5b82ff;
+        --bar: rgba(91, 130, 255, 0.13);
+      }
+
+      /* --- Jade : vert profond, neutres légèrement verts --- */
+      [data-palette='jade'] .theme-light {
+        --bg: #f8f9f8;
+        --surface: #ffffff;
+        --surface-2: #f1f3f2;
+        --border: #e3e7e5;
+        --border-strong: #cfd5d2;
+        --text: #111714;
+        --text-2: #66706b;
+        --text-3: #9aa39e;
+        --signal: #0a8f6a;
+        --bar: rgba(10, 143, 106, 0.08);
+      }
+      [data-palette='jade'] .theme-dark {
+        --bg: #090b0a;
+        --surface: #111413;
+        --surface-2: #181c1a;
+        --border: #232826;
+        --border-strong: #313733;
+        --text: #f1f4f2;
+        --text-2: #9aa39e;
+        --text-3: #6a746e;
+        --signal: #2fd39e;
+        --bar: rgba(47, 211, 158, 0.12);
+      }
+
+      /* --- Iris : violet lumineux, neutres légèrement mauves --- */
+      [data-palette='iris'] .theme-light {
+        --bg: #f9f9fb;
+        --surface: #ffffff;
+        --surface-2: #f2f2f6;
+        --border: #e6e6ec;
+        --border-strong: #d3d3dd;
+        --text: #16151d;
+        --text-2: #6e6c7a;
+        --text-3: #a09eab;
+        --signal: #6a4cff;
+        --bar: rgba(106, 76, 255, 0.08);
+      }
+      [data-palette='iris'] .theme-dark {
+        --bg: #0b0b0f;
+        --surface: #131318;
+        --surface-2: #1a1a21;
+        --border: #26252e;
+        --border-strong: #34333e;
+        --text: #f4f4f7;
+        --text-2: #a09eab;
+        --text-3: #716f7d;
+        --signal: #8f7bff;
+        --bar: rgba(143, 123, 255, 0.13);
+      }
+
+      /* --- Lagon : encre marine + dégradé bleu → lagon → aqua ---
+       * Trio analogue #7988E7 → #79BFE7 → #79E7D8 (thème sombre),
+       * assombri en clair pour garder le contraste sur fond blanc.
+       * Fond sombre : encre marine inspirée de #131F70.
+       */
+      [data-palette='lagon'] .theme-light {
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --surface-2: #eef2f7;
+        --border: #e1e7ef;
+        --border-strong: #cbd4e1;
+        --text: #0e1533;
+        --text-2: #5b6683;
+        --text-3: #929bb3;
+        --signal: #2b8fcb;
+        --grad-a: #4f5fd6;
+        --grad-b: #2b8fcb;
+        --grad-c: #1fb3a1;
+        --bar: rgba(43, 143, 203, 0.09);
+        --up: #0f8a5f;
+        --down: #e11d48;
+      }
+      [data-palette='lagon'] .theme-dark {
+        --bg: #080b1f;
+        --surface: #0e1330;
+        --surface-2: #161c40;
+        --border: #1f2650;
+        --border-strong: #2c3463;
+        --text: #eef1ff;
+        --text-2: #9aa3c7;
+        --text-3: #646d96;
+        --signal: #79bfe7;
+        --grad-a: #7988e7;
+        --grad-b: #79bfe7;
+        --grad-c: #79e7d8;
+        --bar: rgba(121, 191, 231, 0.12);
+        --area: 0.3;
+        --up: #6ee7a8;
+        --down: #fb7185;
+        --shadow: none;
+      }
+
+      /* Dégradé signature : identique à l'accent pour les autres palettes. */
+      .frame {
+        --grad-a: var(--signal);
+        --grad-b: var(--signal);
+        --grad-c: var(--signal);
+      }
+      .logo-mark {
+        background: linear-gradient(135deg, var(--grad-a), var(--grad-b) 55%, var(--grad-c));
+      }
+      .logo-mark path {
+        stroke: #fff;
+      }
+      .kpi.active::before,
+      .legend .sw:not(.prev),
+      .tooltip .dot:not(.prev) {
+        background: linear-gradient(90deg, var(--grad-a), var(--grad-b), var(--grad-c));
+      }
+
+      /* --- Sélecteur de palette (hors maquette) --- */
+      .switcher {
+        position: sticky;
+        top: 12px;
+        z-index: 10;
+        max-width: 1280px;
+        margin: 0 auto 28px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid #d6d3d1;
+        border-radius: 12px;
+        font-size: 13px;
+      }
+      .switcher > span {
+        padding: 0 8px;
+        color: #57534e;
+        margin-right: auto;
+      }
+      .switcher button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font: inherit;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        background: none;
+        cursor: pointer;
+        color: #1c1917;
+      }
+      .switcher button[aria-pressed='true'] {
+        background: #fff;
+        border-color: #d6d3d1;
+        font-weight: 500;
+      }
+      .switcher .chip {
+        display: flex;
+      }
+      .switcher .chip i {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+      }
+      .switcher .chip i + i {
+        margin-left: -5px;
+      }
+    </style>
+  </head>
+  <body data-palette="lagon">
+    <div class="switcher" role="group" aria-label="Palette">
+      <span>Palette</span>
+      <button data-set="lagon"><span class="chip"><i style="background:#7988e7"></i><i style="background:#79bfe7"></i><i style="background:#79e7d8"></i></span>Lagon</button>
+      <button data-set="cobalt"><span class="chip"><i style="background:#2b59ff"></i><i style="background:#5b82ff"></i></span>Cobalt</button>
+      <button data-set="jade"><span class="chip"><i style="background:#0a8f6a"></i><i style="background:#2fd39e"></i></span>Jade</button>
+      <button data-set="iris"><span class="chip"><i style="background:#6a4cff"></i><i style="background:#8f7bff"></i></span>Iris</button>
+    </div>
+
+    <p class="page-label">Thème clair</p>
+    <div class="frame theme-light" data-frame></div>
+
+    <p class="page-label">Thème sombre</p>
+    <div class="frame theme-dark" data-frame></div>
+
+    <template id="frame-tpl">
+      <aside class="sidebar">
+        <div class="logo">
+          <span class="logo-mark">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M1 10 L4 5 L7 7.5 L11 1.5" stroke="var(--bg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          Atollo
+        </div>
+
+        <div class="site-switch">
+          <span class="favicon">A</span>
+          <span class="name">Atelier Nord<span class="domain">atelier-nord.example</span></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-3)"><path d="m7 15 5 5 5-5M7 9l5-5 5 5" /></svg>
+        </div>
+
+        <nav class="nav">
+          <p class="nav-title">Analyse</p>
+          <a class="active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></svg>Vue d'ensemble</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>Trafic</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg>Pages</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" /></svg>Localisation</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="14" height="10" rx="1.5" /><rect x="17" y="8" width="5" height="12" rx="1" /><path d="M6 18h6" /></svg>Appareils</a>
+        </nav>
+
+        <nav class="nav">
+          <p class="nav-title">Espace</p>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18M3 12h18M3 17h18" /></svg>Mes sites</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg>Paramètres</a>
+        </nav>
+
+        <div class="sidebar-foot">
+          <span class="avatar">D</span>
+          <span style="font-size: 13px">Compte démo</span>
+        </div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <h1>Vue d'ensemble <span class="live"><i></i><span class="mono">14</span> visiteurs en ligne</span></h1>
+          <div class="segmented">
+            <button>24 h</button><button>7 j</button><button class="on">30 j</button><button>90 j</button>
+          </div>
+          <button class="btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+            <span class="mono" style="font-size: 12px">11 oct. – 9 nov.</span>
+          </button>
+          <button class="btn icon" aria-label="Changer de thème">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+          </button>
+        </header>
+
+        <div class="content">
+          <section class="panel">
+            <div class="kpis">
+              <div class="kpi active">
+                <p class="kpi-label">Visiteurs uniques</p>
+                <p class="kpi-value mono">38 412</p>
+                <span class="delta up mono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M8 7h9v9" /></svg>12,4 %</span>
+              </div>
+              <div class="kpi">
+                <p class="kpi-label">Visites</p>
+                <p class="kpi-value mono">52 870</p>
+                <span class="delta up mono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M8 7h9v9" /></svg>9,8 %</span>
+              </div>
+              <div class="kpi">
+                <p class="kpi-label">Pages vues</p>
+                <p class="kpi-value mono">141 236</p>
+                <span class="delta up mono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M8 7h9v9" /></svg>6,1 %</span>
+              </div>
+              <div class="kpi">
+                <p class="kpi-label">Taux de rebond</p>
+                <p class="kpi-value mono">41,3<small>%</small></p>
+                <span class="delta up mono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 7l10 10M17 8v9H8" /></svg>2,6 pts</span>
+              </div>
+              <div class="kpi">
+                <p class="kpi-label">Durée moyenne</p>
+                <p class="kpi-value mono">2<small>min</small> 48<small>s</small></p>
+                <span class="delta down mono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 7l10 10M17 8v9H8" /></svg>4,2 %</span>
+              </div>
+            </div>
+
+            <div class="chart-head">
+              <span class="title">Visiteurs uniques par jour</span>
+              <span class="legend"><i class="sw"></i>30 derniers jours</span>
+              <span class="legend"><i class="sw prev"></i>Période précédente</span>
+            </div>
+            <div class="chart" data-chart>
+              <svg></svg>
+              <div class="tooltip"></div>
+            </div>
+          </section>
+
+          <div class="grid-2">
+            <section class="panel">
+              <div class="card-head">
+                <h2>Sources</h2>
+                <div class="tabs"><span class="on">Canaux</span><span>Référents</span><span>Campagnes</span></div>
+              </div>
+              <div class="cols"><span>Canal</span><span>Visiteurs</span></div>
+              <div class="list" data-list="sources"></div>
+            </section>
+            <section class="panel">
+              <div class="card-head">
+                <h2>Pages</h2>
+                <div class="tabs"><span class="on">Populaires</span><span>Entrées</span><span>Sorties</span></div>
+              </div>
+              <div class="cols"><span>Page</span><span>Visiteurs</span></div>
+              <div class="list" data-list="pages"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      // --- Illustrative data (deterministic) -------------------------------
+      const days = 30
+      const end = new Date(2026, 10, 9)
+      const series = Array.from({ length: days }, (_, i) => {
+        const d = new Date(end)
+        d.setDate(end.getDate() - (days - 1 - i))
+        const weekend = [0, 6].includes(d.getDay())
+        const trend = 1080 + i * 9
+        const wave = Math.sin(i * 1.7) * 60 + Math.cos(i * 0.6) * 40
+        const current = Math.round((trend + wave) * (weekend ? 0.72 : 1))
+        const prevWave = Math.sin(i * 1.3 + 1) * 55
+        const previous = Math.round((960 + i * 6 + prevWave) * (weekend ? 0.74 : 1))
+        return { date: d, current, previous }
+      })
+
+      const lists = {
+        sources: [
+          ['Recherche organique', 16133, 42],
+          ['Direct', 10371, 27],
+          ['Réseaux sociaux', 5378, 14],
+          ['Sites référents', 4225, 11],
+          ['Campagnes', 2305, 6],
+        ],
+        pages: [
+          ['/', 21480, 56],
+          ['/blog/design-tokens', 7920, 21],
+          ['/tarifs', 5204, 14],
+          ['/blog/vue-3-composables', 3866, 10],
+          ['/contact', 1710, 4],
+        ],
+      }
+
+      const fmt = new Intl.NumberFormat('fr-FR')
+      const fmtDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+
+      // --- Palette switcher ---------------------------------------------------
+      const buttons = document.querySelectorAll('[data-set]')
+      const setPalette = (name) => {
+        document.body.dataset.palette = name
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === name)))
+      }
+      buttons.forEach((b) => b.addEventListener('click', () => setPalette(b.dataset.set)))
+      setPalette('lagon')
+
+      // --- Render each frame ------------------------------------------------
+      const tpl = document.getElementById('frame-tpl')
+      document.querySelectorAll('[data-frame]').forEach((frame) => {
+        frame.appendChild(tpl.content.cloneNode(true))
+
+        frame.querySelectorAll('[data-list]').forEach((el) => {
+          const rows = lists[el.dataset.list]
+          const max = rows[0][1]
+          el.innerHTML = rows
+            .map(
+              ([label, value, share]) => `
+              <div class="bar-row" style="--w:${(value / max) * 100}%">
+                <span class="label ${label.startsWith('/') ? 'path' : ''}">${label}</span>
+                <span class="val mono"><span>${fmt.format(value)}</span><span class="share">${share} %</span></span>
+              </div>`,
+            )
+            .join('')
+        })
+
+        drawChart(frame.querySelector('[data-chart]'))
+      })
+
+      function drawChart(container) {
+        const svg = container.querySelector('svg')
+        const tip = container.querySelector('.tooltip')
+        const W = container.clientWidth - 16
+        const H = 260
+        const pad = { l: 52, r: 12, t: 16, b: 28 }
+        const max = 1600
+        const x = (i) => pad.l + (i / (days - 1)) * (W - pad.l - pad.r)
+        const y = (v) => pad.t + (1 - v / max) * (H - pad.t - pad.b)
+
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
+
+        // Smooth path (monotone-ish via cubic midpoints)
+        const path = (key) =>
+          series
+            .map((p, i) => {
+              if (i === 0) return `M${x(0)},${y(p[key])}`
+              const px = x(i - 1)
+              const py = y(series[i - 1][key])
+              const cx = (px + x(i)) / 2
+              return `C${cx},${py} ${cx},${y(p[key])} ${x(i)},${y(p[key])}`
+            })
+            .join(' ')
+
+        const grid = [0, 400, 800, 1200, 1600]
+          .map(
+            (v) => `
+            <line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--border)" ${v ? 'stroke-dasharray="2 4"' : ''} />
+            <text x="${pad.l - 12}" y="${y(v) + 4}" text-anchor="end" font-family="Geist Mono" font-size="11" fill="var(--text-3)">${v ? fmt.format(v) : '0'}</text>`,
+          )
+          .join('')
+
+        const xLabels = series
+          .map((p, i) =>
+            i % 7 === 2
+              ? `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="var(--text-3)">${p.date.getDate()} ${p.date.toLocaleDateString('fr-FR', { month: 'short' })}</text>`
+              : '',
+          )
+          .join('')
+
+        const id = 'g' + Math.random().toString(36).slice(2)
+        svg.innerHTML = `
+          <defs>
+            <linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="var(--signal)" stop-opacity="var(--area, 0.16)" />
+              <stop offset="1" stop-color="var(--signal)" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="${id}-line" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="var(--grad-a)" />
+              <stop offset="0.5" stop-color="var(--grad-b)" />
+              <stop offset="1" stop-color="var(--grad-c)" />
+            </linearGradient>
+          </defs>
+          ${grid}${xLabels}
+          <path d="${path('previous')}" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-dasharray="4 4" />
+          <path d="${path('current')} L${x(days - 1)},${y(0)} L${x(0)},${y(0)} Z" fill="url(#${id})" />
+          <path d="${path('current')}" fill="none" stroke="url(#${id}-line)" stroke-width="2.25" stroke-linejoin="round" />
+          <line class="cursor" y1="${pad.t}" y2="${H - pad.b}" stroke="var(--border-strong)" opacity="0" />
+          <circle class="dot" r="4" fill="var(--surface)" stroke="var(--signal)" stroke-width="2" opacity="0" />
+        `
+
+        const cursor = svg.querySelector('.cursor')
+        const dot = svg.querySelector('.dot')
+
+        container.addEventListener('mousemove', (e) => {
+          const rect = svg.getBoundingClientRect()
+          const mx = ((e.clientX - rect.left) / rect.width) * W
+          const i = Math.max(0, Math.min(days - 1, Math.round(((mx - pad.l) / (W - pad.l - pad.r)) * (days - 1))))
+          const p = series[i]
+          const delta = ((p.current - p.previous) / p.previous) * 100
+          cursor.setAttribute('x1', x(i))
+          cursor.setAttribute('x2', x(i))
+          cursor.setAttribute('opacity', 1)
+          dot.setAttribute('cx', x(i))
+          dot.setAttribute('cy', y(p.current))
+          dot.setAttribute('opacity', 1)
+          tip.innerHTML = `
+            <div class="t-date">${fmtDate.format(p.date)}</div>
+            <div class="row"><span><i class="dot"></i>Visiteurs</span><b class="mono">${fmt.format(p.current)}</b></div>
+            <div class="row"><span><i class="dot prev"></i>Précédent</span><span class="mono" style="color:var(--text-2)">${fmt.format(p.previous)}</span></div>
+            <div class="row" style="margin-top:8px"><span style="color:var(--text-2)">Variation</span><span class="mono" style="color:var(${delta >= 0 ? '--up' : '--down'})">${delta >= 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')} %</span></div>`
+          const left = (x(i) / W) * rect.width
+          tip.style.left = `${Math.min(left + 16, rect.width - 180)}px`
+          tip.style.top = `24px`
+          tip.style.opacity = 1
+        })
+        container.addEventListener('mouseleave', () => {
+          tip.style.opacity = 0
+          cursor.setAttribute('opacity', 0)
+          dot.setAttribute('opacity', 0)
+        })
+      }
+    </script>
+  </body>
+</html>
