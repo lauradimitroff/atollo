@@ -71,9 +71,11 @@ const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
 
 <template>
   <div class="flex h-full flex-col gap-5 px-3 py-5">
+    <!-- The logo resets: home (all sites), default period, no filter. -->
     <RouterLink
-      :to="{ name: 'overview', params: { siteId: site.id } }"
+      :to="{ name: 'sites' }"
       class="w-fit rounded-md px-2"
+      aria-label="Atollo, retour à l’accueil"
     >
       <AppLogo />
     </RouterLink>

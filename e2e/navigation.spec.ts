@@ -1,4 +1,9 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+/** The sidebar is always visible on desktop, behind the menu button on mobile. */
+async function showSidebar(page: Page, isMobile: boolean) {
+  if (isMobile) await page.getByRole('button', { name: 'Ouvrir la navigation' }).click()
+}
 
 test.describe('desktop navigation', { tag: '@desktop' }, () => {
   test('navigates with the sidebar and switches site', async ({ page }) => {
@@ -38,6 +43,14 @@ test.describe('mobile navigation', { tag: '@mobile' }, () => {
     await expect(page).toHaveURL('/s/atelier-nord/traffic')
     await expect(drawer).toBeHidden()
   })
+})
+
+test('the logo goes back home and resets the period', async ({ page, isMobile }) => {
+  await page.goto('/s/studio-brume/pages?period=7d')
+  await showSidebar(page, isMobile)
+  await page.getByRole('link', { name: 'Atollo, retour à l’accueil' }).click()
+
+  await expect(page).toHaveURL('/sites')
 })
 
 test('unknown site shows the 404 page', async ({ page }) => {
