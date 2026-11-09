@@ -9,12 +9,15 @@ defineProps<{
   icon: Component
   title: string
   description?: string
+  /** Inside a panel that already has its own border: no frame of its own. */
+  bare?: boolean
 }>()
 </script>
 
 <template>
   <div
-    class="relative flex flex-col items-center overflow-hidden rounded-xl border border-dashed border-line-strong bg-surface px-6 py-16 text-center"
+    class="relative flex flex-col items-center overflow-hidden px-6 text-center"
+    :class="bare ? 'py-12' : 'rounded-xl border border-dashed border-line-strong bg-surface py-16'"
   >
     <div
       class="pointer-events-none absolute inset-0 [background-image:radial-gradient(var(--line-strong)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)] [background-size:16px_16px] opacity-60"

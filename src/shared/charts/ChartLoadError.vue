@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { RotateCcw } from '@lucide/vue'
-
-import BaseButton from '@/shared/ui/BaseButton.vue'
+import ErrorState from '@/shared/ui/ErrorState.vue'
 
 /**
- * Shown when the chart code itself cannot be downloaded (network drop, or an app
- * update deployed while the tab was open). Reloading fetches the current version.
+ * Shown when the chart code itself cannot be downloaded (network drop, an ad blocker,
+ * or an app update deployed while the tab was open). Reloading fetches the current version.
  */
 function reload() {
   window.location.reload()
@@ -13,13 +11,10 @@ function reload() {
 </script>
 
 <template>
-  <div
-    class="flex h-56 flex-col items-center justify-center gap-3 text-[13px] text-fg-muted sm:h-64"
-    role="alert"
-  >
-    Le graphique n’a pas pu être chargé.
-    <BaseButton size="sm" @click="reload"
-      ><RotateCcw aria-hidden="true" />Recharger la page</BaseButton
-    >
-  </div>
+  <ErrorState
+    class="h-56 sm:h-64"
+    message="Le graphique n’a pas pu être chargé."
+    action-label="Recharger la page"
+    @retry="reload"
+  />
 </template>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ListFilter, RotateCcw, X } from '@lucide/vue'
+import { ListFilter, X } from '@lucide/vue'
 
 import { formatNumber, formatPercent } from '@/shared/lib/format'
-import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
+import ErrorState from '@/shared/ui/ErrorState.vue'
 import { useAnalyticsQuery } from '../composables/useAnalyticsQuery'
 import { useFilters } from '../composables/useFilters'
 import type { BreakdownTab } from './breakdown'
@@ -41,14 +41,7 @@ const filterFor = (key: string) => ({ dimension: props.tab.filterDimension, valu
 
   <!-- Fixed height (limit × row height): switching tab or period never makes the page jump. -->
   <div class="px-3 pb-3" :style="{ minHeight: `${limit * 2.25 + 0.75}rem` }" :aria-busy="loading">
-    <div
-      v-if="error && !data"
-      class="flex h-40 flex-col items-center justify-center gap-3 text-[13px] text-fg-muted"
-      role="alert"
-    >
-      Impossible de charger ces données.
-      <BaseButton size="sm" @click="reload()"><RotateCcw aria-hidden="true" />Réessayer</BaseButton>
-    </div>
+    <ErrorState v-if="error && !data" class="h-40" @retry="reload()" />
 
     <ul v-else-if="!data" aria-label="Chargement">
       <li v-for="n in limit" :key="n" class="flex h-9 items-center justify-between px-2">

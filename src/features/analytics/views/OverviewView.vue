@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from 'vue'
-import { RotateCcw } from '@lucide/vue'
+import { CalendarSearch, FilterX } from '@lucide/vue'
 
 import ChartLoadError from '@/shared/charts/ChartLoadError.vue'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
+import EmptyState from '@/shared/ui/EmptyState.vue'
+import ErrorState from '@/shared/ui/ErrorState.vue'
 import BreakdownCard from '../components/BreakdownCard.vue'
 import KpiStrip from '../components/KpiStrip.vue'
 import { DEVICES_TABS, LOCATIONS_TABS, PAGES_TABS, SOURCES_TABS } from '../overview-cards'
 import { useAnalyticsQuery } from '../composables/useAnalyticsQuery'
+import { useFilters } from '../composables/useFilters'
 import { usePeriod } from '../composables/usePeriod'
 import { useSelectedMetric } from '../composables/useSelectedMetric'
 import { analytics } from '../data'
@@ -30,7 +33,8 @@ const TimeseriesChart = defineAsyncComponent({
 })
 
 const metric = useSelectedMetric()
-const { granularity, range } = usePeriod()
+const { granularity, range, period, setPreset } = usePeriod()
+const { filters, clear: clearFilters } = useFilters()
 
 const kpis = useAnalyticsQuery((q) => analytics.getKpis(q))
 const series = useAnalyticsQuery(
@@ -62,6 +66,13 @@ const key = computed(() => metric.value)
 
 // While the period is running, its last point (this hour, day or month) is incomplete.
 const periodRunning = computed(() => range.value.end.getTime() > Date.now())
+
+/**
+ * No visit at all: the chart and cards would only show zeros, so one clear message
+ * replaces them, with the most useful way out (fewer filters, or a longer period).
+ */
+const isEmpty = computed(() => kpis.data.value?.visits.current === 0)
+const isFiltered = computed(() => filters.value.length > 0)
 </script>
 
 <template>
@@ -70,48 +81,73 @@ const periodRunning = computed(() => range.value.end.getTime() > Date.now())
       class="overflow-hidden rounded-xl border border-line bg-surface shadow-xs"
       aria-label="Tendance"
     >
-      <KpiStrip v-model="metric" :kpis="kpis.data.value" :loading="kpis.loading.value" />
+      <ErrorState
+        v-if="kpis.error.value && !kpis.data.value"
+        class="h-28 border-b border-line"
+        message="Les indicateurs n’ont pas pu être chargés."
+        @retry="kpis.reload()"
+      />
+      <KpiStrip v-else v-model="metric" :kpis="kpis.data.value" :loading="kpis.loading.value" />
 
-      <div class="flex flex-wrap items-center gap-x-5 gap-y-1 px-5 pt-4 text-xs text-fg-muted">
-        <h2 class="mr-auto text-[13px] font-medium text-fg">{{ chartTitle }}</h2>
-        <span class="inline-flex items-center gap-2">
-          <i class="h-0.5 w-3.5 rounded-full bg-brand-gradient" aria-hidden="true" />
-          Période sélectionnée
-        </span>
-        <span class="inline-flex items-center gap-2">
-          <i class="w-3.5 border-t-2 border-dashed border-fg-subtle" aria-hidden="true" />
-          Période précédente
-        </span>
-      </div>
+      <EmptyState
+        v-if="isEmpty && isFiltered"
+        bare
+        :icon="FilterX"
+        title="Aucune visite ne correspond à ces filtres"
+        description="Retirez un filtre ou élargissez la période pour retrouver des données."
+      >
+        <BaseButton variant="primary" @click="clearFilters()">Effacer les filtres</BaseButton>
+      </EmptyState>
+      <EmptyState
+        v-else-if="isEmpty"
+        bare
+        :icon="CalendarSearch"
+        title="Aucune visite sur cette période"
+        description="Le site n’a encore reçu aucune visite sur cette période."
+      >
+        <BaseButton v-if="period.preset !== '30d'" variant="primary" @click="setPreset('30d')">
+          Voir les 30 derniers jours
+        </BaseButton>
+      </EmptyState>
 
-      <div class="px-2 pt-2 pb-3 sm:px-3" :aria-busy="series.loading.value">
-        <div
-          v-if="series.error.value && !series.data.value"
-          class="flex h-56 flex-col items-center justify-center gap-3 text-[13px] text-fg-muted sm:h-64"
-          role="alert"
-        >
-          Impossible de charger le graphique.
-          <BaseButton size="sm" @click="series.reload()">
-            <RotateCcw aria-hidden="true" />Réessayer
-          </BaseButton>
+      <template v-else>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 px-5 pt-4 text-xs text-fg-muted">
+          <h2 class="mr-auto text-[13px] font-medium text-fg">{{ chartTitle }}</h2>
+          <span class="inline-flex items-center gap-2">
+            <i class="h-0.5 w-3.5 rounded-full bg-brand-gradient" aria-hidden="true" />
+            Période sélectionnée
+          </span>
+          <span class="inline-flex items-center gap-2">
+            <i class="w-3.5 border-t-2 border-dashed border-fg-subtle" aria-hidden="true" />
+            Période précédente
+          </span>
         </div>
-        <BaseSkeleton v-else-if="!series.data.value" class="mx-3 my-2 h-52 sm:h-60" />
-        <TimeseriesChart
-          v-else
-          :class="{ 'opacity-60 transition-opacity': series.loading.value }"
-          :points="chartPoints"
-          :title="chartTitle"
-          current-label="Période sélectionnée"
-          previous-label="Période précédente"
-          :format-value="(v: number) => formatMetric(key, v)"
-          :format-axis="(v: number) => formatAxis(key, v)"
-          :format-change="(c: number, p: number) => formatChangeBetween(key, c, p)"
-          :last-is-partial="periodRunning"
-        />
-      </div>
+
+        <div class="px-2 pt-2 pb-3 sm:px-3" :aria-busy="series.loading.value">
+          <ErrorState
+            v-if="series.error.value && !series.data.value"
+            class="h-56 sm:h-64"
+            message="Le graphique n’a pas pu être chargé."
+            @retry="series.reload()"
+          />
+          <BaseSkeleton v-else-if="!series.data.value" class="mx-3 my-2 h-52 sm:h-60" />
+          <TimeseriesChart
+            v-else
+            :class="{ 'opacity-60 transition-opacity': series.loading.value }"
+            :points="chartPoints"
+            :title="chartTitle"
+            current-label="Période sélectionnée"
+            previous-label="Période précédente"
+            :format-value="(v: number) => formatMetric(key, v)"
+            :format-axis="(v: number) => formatAxis(key, v)"
+            :format-change="(c: number, p: number) => formatChangeBetween(key, c, p)"
+            :last-is-partial="periodRunning"
+          />
+        </div>
+      </template>
     </section>
 
-    <div class="grid gap-5 lg:grid-cols-2">
+    <div v-if="!isEmpty" class="grid gap-5 lg:grid-cols-2">
       <BreakdownCard title="Sources" :tabs="SOURCES_TABS" />
       <BreakdownCard title="Pages" :tabs="PAGES_TABS" />
       <BreakdownCard title="Localisation" :tabs="LOCATIONS_TABS" />

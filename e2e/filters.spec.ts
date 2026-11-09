@@ -48,3 +48,15 @@ test('filters are kept when moving to another page of the site', async ({ page, 
   await expect(page).toHaveURL('/s/atelier-nord/traffic?period=7d&device=mobile')
   await expect(page.getByRole('region', { name: 'Filtres actifs' })).toBeVisible()
 })
+
+test('filters matching nothing show an explanation and a way out', async ({ page }) => {
+  await page.goto('/s/atelier-nord/overview?campaign=inexistante')
+
+  await expect(
+    page.getByRole('heading', { name: 'Aucune visite ne correspond à ces filtres' }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Effacer les filtres' }).click()
+
+  await expect(page).not.toHaveURL(/campaign=/)
+  await expect(page.getByRole('region', { name: 'Sources' })).toBeVisible()
+})
