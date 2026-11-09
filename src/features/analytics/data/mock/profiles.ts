@@ -14,6 +14,11 @@ export interface PageProfile {
   entryWeight: number
   /** Typical reading time, in seconds. */
   avgTimeS: number
+  /**
+   * How often visitors leave the site from this page. Home pages and listings lead
+   * further ("rare"); articles, contact or confirmation pages end visits ("often").
+   */
+  exit?: 'rare' | 'often'
 }
 
 export interface SiteProfile {
@@ -105,18 +110,24 @@ const ATELIER_NORD: SiteProfile = {
     ['ES', 2],
   ],
   pages: [
-    { path: '/', weight: 30, entryWeight: 30, avgTimeS: 45 },
-    { path: '/projets', weight: 18, entryWeight: 4, avgTimeS: 50 },
+    { path: '/', weight: 30, entryWeight: 30, avgTimeS: 45, exit: 'rare' },
+    { path: '/projets', weight: 18, entryWeight: 4, avgTimeS: 50, exit: 'rare' },
     { path: '/projets/identite-cafe-torrefacteur', weight: 9, entryWeight: 4, avgTimeS: 95 },
     { path: '/projets/refonte-boutique-en-ligne', weight: 7, entryWeight: 3, avgTimeS: 85 },
     { path: '/studio', weight: 9, entryWeight: 2, avgTimeS: 60 },
-    { path: '/blog', weight: 10, entryWeight: 3, avgTimeS: 35 },
-    { path: '/blog/design-tokens', weight: 9, entryWeight: 20, avgTimeS: 240 },
-    { path: '/blog/vue-3-composables', weight: 7, entryWeight: 14, avgTimeS: 270 },
-    { path: '/blog/typographie-variable', weight: 5, entryWeight: 9, avgTimeS: 210 },
-    { path: '/blog/accessibilite-couleurs', weight: 5, entryWeight: 8, avgTimeS: 225 },
+    { path: '/blog', weight: 10, entryWeight: 3, avgTimeS: 35, exit: 'rare' },
+    { path: '/blog/design-tokens', weight: 9, entryWeight: 20, avgTimeS: 240, exit: 'often' },
+    { path: '/blog/vue-3-composables', weight: 7, entryWeight: 14, avgTimeS: 270, exit: 'often' },
+    { path: '/blog/typographie-variable', weight: 5, entryWeight: 9, avgTimeS: 210, exit: 'often' },
+    {
+      path: '/blog/accessibilite-couleurs',
+      weight: 5,
+      entryWeight: 8,
+      avgTimeS: 225,
+      exit: 'often',
+    },
     { path: '/tarifs', weight: 8, entryWeight: 2, avgTimeS: 70 },
-    { path: '/contact', weight: 7, entryWeight: 1, avgTimeS: 55 },
+    { path: '/contact', weight: 7, entryWeight: 1, avgTimeS: 55, exit: 'often' },
   ],
 }
 
@@ -176,16 +187,22 @@ export const PROFILES: Record<string, SiteProfile> = {
       ['JP', 3],
     ],
     pages: [
-      { path: '/', weight: 28, entryWeight: 34, avgTimeS: 40 },
-      { path: '/portfolio', weight: 20, entryWeight: 8, avgTimeS: 75 },
+      { path: '/', weight: 28, entryWeight: 34, avgTimeS: 40, exit: 'rare' },
+      { path: '/portfolio', weight: 20, entryWeight: 8, avgTimeS: 75, exit: 'rare' },
       { path: '/portfolio/mariages', weight: 14, entryWeight: 14, avgTimeS: 120 },
       { path: '/portfolio/portraits', weight: 9, entryWeight: 8, avgTimeS: 95 },
       { path: '/portfolio/islande', weight: 8, entryWeight: 16, avgTimeS: 140 },
-      { path: '/journal', weight: 6, entryWeight: 2, avgTimeS: 30 },
-      { path: '/journal/lumiere-naturelle', weight: 5, entryWeight: 12, avgTimeS: 200 },
+      { path: '/journal', weight: 6, entryWeight: 2, avgTimeS: 30, exit: 'rare' },
+      {
+        path: '/journal/lumiere-naturelle',
+        weight: 5,
+        entryWeight: 12,
+        avgTimeS: 200,
+        exit: 'often',
+      },
       { path: '/tarifs', weight: 9, entryWeight: 3, avgTimeS: 80 },
       { path: '/a-propos', weight: 6, entryWeight: 2, avgTimeS: 50 },
-      { path: '/contact', weight: 6, entryWeight: 1, avgTimeS: 60 },
+      { path: '/contact', weight: 6, entryWeight: 1, avgTimeS: 60, exit: 'often' },
     ],
   },
 
@@ -240,15 +257,21 @@ export const PROFILES: Record<string, SiteProfile> = {
       ],
     },
     pages: [
-      { path: '/', weight: 30, entryWeight: 44, avgTimeS: 35 },
-      { path: '/nos-pains', weight: 16, entryWeight: 8, avgTimeS: 55 },
-      { path: '/patisseries', weight: 14, entryWeight: 8, avgTimeS: 60 },
+      { path: '/', weight: 30, entryWeight: 44, avgTimeS: 35, exit: 'rare' },
+      { path: '/nos-pains', weight: 16, entryWeight: 8, avgTimeS: 55, exit: 'rare' },
+      { path: '/patisseries', weight: 14, entryWeight: 8, avgTimeS: 60, exit: 'rare' },
       { path: '/commander', weight: 14, entryWeight: 12, avgTimeS: 110 },
-      { path: '/commander/confirmation', weight: 6, entryWeight: 0, avgTimeS: 25 },
-      { path: '/horaires', weight: 12, entryWeight: 18, avgTimeS: 20 },
+      { path: '/commander/confirmation', weight: 6, entryWeight: 0, avgTimeS: 25, exit: 'often' },
+      { path: '/horaires', weight: 12, entryWeight: 18, avgTimeS: 20, exit: 'often' },
       { path: '/actualites', weight: 4, entryWeight: 1, avgTimeS: 30 },
-      { path: '/actualites/galette-des-rois', weight: 3, entryWeight: 7, avgTimeS: 90 },
-      { path: '/contact', weight: 5, entryWeight: 2, avgTimeS: 40 },
+      {
+        path: '/actualites/galette-des-rois',
+        weight: 3,
+        entryWeight: 7,
+        avgTimeS: 90,
+        exit: 'often',
+      },
+      { path: '/contact', weight: 5, entryWeight: 2, avgTimeS: 40, exit: 'often' },
     ],
   },
 
@@ -299,14 +322,20 @@ export const PROFILES: Record<string, SiteProfile> = {
       ],
     },
     pages: [
-      { path: '/', weight: 26, entryWeight: 30, avgTimeS: 40 },
-      { path: '/expertises', weight: 16, entryWeight: 4, avgTimeS: 55 },
+      { path: '/', weight: 26, entryWeight: 30, avgTimeS: 40, exit: 'rare' },
+      { path: '/expertises', weight: 16, entryWeight: 4, avgTimeS: 55, exit: 'rare' },
       { path: '/expertises/droit-du-travail', weight: 14, entryWeight: 20, avgTimeS: 150 },
       { path: '/expertises/droit-de-la-famille', weight: 11, entryWeight: 14, avgTimeS: 140 },
       { path: '/honoraires', weight: 12, entryWeight: 6, avgTimeS: 90 },
       { path: '/equipe', weight: 8, entryWeight: 2, avgTimeS: 45 },
-      { path: '/actualites/rupture-conventionnelle', weight: 5, entryWeight: 18, avgTimeS: 260 },
-      { path: '/contact', weight: 8, entryWeight: 6, avgTimeS: 60 },
+      {
+        path: '/actualites/rupture-conventionnelle',
+        weight: 5,
+        entryWeight: 18,
+        avgTimeS: 260,
+        exit: 'often',
+      },
+      { path: '/contact', weight: 8, entryWeight: 6, avgTimeS: 60, exit: 'often' },
     ],
   },
 
@@ -353,14 +382,20 @@ export const PROFILES: Record<string, SiteProfile> = {
       ['CA', 3],
     ],
     pages: [
-      { path: '/', weight: 24, entryWeight: 30, avgTimeS: 35 },
-      { path: '/velos-electriques', weight: 20, entryWeight: 20, avgTimeS: 70 },
+      { path: '/', weight: 24, entryWeight: 30, avgTimeS: 35, exit: 'rare' },
+      { path: '/velos-electriques', weight: 20, entryWeight: 20, avgTimeS: 70, exit: 'rare' },
       { path: '/velos-electriques/comete-e2', weight: 14, entryWeight: 16, avgTimeS: 130 },
-      { path: '/accessoires', weight: 10, entryWeight: 6, avgTimeS: 55 },
+      { path: '/accessoires', weight: 10, entryWeight: 6, avgTimeS: 55, exit: 'rare' },
       { path: '/atelier-reparation', weight: 8, entryWeight: 8, avgTimeS: 60 },
       { path: '/panier', weight: 10, entryWeight: 1, avgTimeS: 45 },
-      { path: '/commande/confirmation', weight: 4, entryWeight: 0, avgTimeS: 20 },
-      { path: '/blog/entretenir-sa-chaine', weight: 4, entryWeight: 12, avgTimeS: 200 },
+      { path: '/commande/confirmation', weight: 4, entryWeight: 0, avgTimeS: 20, exit: 'often' },
+      {
+        path: '/blog/entretenir-sa-chaine',
+        weight: 4,
+        entryWeight: 12,
+        avgTimeS: 200,
+        exit: 'often',
+      },
     ],
   },
 
@@ -403,14 +438,26 @@ export const PROFILES: Record<string, SiteProfile> = {
       ['CH', 5],
     ],
     pages: [
-      { path: '/', weight: 22, entryWeight: 26, avgTimeS: 40 },
-      { path: '/vivaces', weight: 16, entryWeight: 12, avgTimeS: 80 },
-      { path: '/arbustes', weight: 12, entryWeight: 8, avgTimeS: 75 },
-      { path: '/arbres-fruitiers', weight: 12, entryWeight: 10, avgTimeS: 85 },
-      { path: '/conseils/planter-a-l-automne', weight: 8, entryWeight: 18, avgTimeS: 210 },
-      { path: '/conseils/tailler-les-rosiers', weight: 8, entryWeight: 16, avgTimeS: 190 },
+      { path: '/', weight: 22, entryWeight: 26, avgTimeS: 40, exit: 'rare' },
+      { path: '/vivaces', weight: 16, entryWeight: 12, avgTimeS: 80, exit: 'rare' },
+      { path: '/arbustes', weight: 12, entryWeight: 8, avgTimeS: 75, exit: 'rare' },
+      { path: '/arbres-fruitiers', weight: 12, entryWeight: 10, avgTimeS: 85, exit: 'rare' },
+      {
+        path: '/conseils/planter-a-l-automne',
+        weight: 8,
+        entryWeight: 18,
+        avgTimeS: 210,
+        exit: 'often',
+      },
+      {
+        path: '/conseils/tailler-les-rosiers',
+        weight: 8,
+        entryWeight: 16,
+        avgTimeS: 190,
+        exit: 'often',
+      },
       { path: '/panier', weight: 8, entryWeight: 1, avgTimeS: 40 },
-      { path: '/contact', weight: 4, entryWeight: 2, avgTimeS: 45 },
+      { path: '/contact', weight: 4, entryWeight: 2, avgTimeS: 45, exit: 'often' },
     ],
   },
 
@@ -456,12 +503,12 @@ export const PROFILES: Record<string, SiteProfile> = {
       ],
     },
     pages: [
-      { path: '/', weight: 22, entryWeight: 34, avgTimeS: 30 },
-      { path: '/planning', weight: 24, entryWeight: 22, avgTimeS: 50 },
+      { path: '/', weight: 22, entryWeight: 34, avgTimeS: 30, exit: 'rare' },
+      { path: '/planning', weight: 24, entryWeight: 22, avgTimeS: 50, exit: 'rare' },
       { path: '/cours/vinyasa', weight: 10, entryWeight: 8, avgTimeS: 70 },
       { path: '/cours/yin', weight: 8, entryWeight: 6, avgTimeS: 70 },
       { path: '/tarifs', weight: 14, entryWeight: 6, avgTimeS: 60 },
-      { path: '/reserver', weight: 16, entryWeight: 14, avgTimeS: 80 },
+      { path: '/reserver', weight: 16, entryWeight: 14, avgTimeS: 80, exit: 'often' },
       { path: '/stage-printemps', weight: 6, entryWeight: 10, avgTimeS: 110 },
     ],
   },

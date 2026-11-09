@@ -150,3 +150,11 @@ describe('site summaries (multi-site overview)', () => {
     expect(summary!.visitors).toEqual({ current: 0, previous: 0, change: null })
   })
 })
+
+describe('page behavior', () => {
+  it('visitors leave more often from contact and articles than from the home page', async () => {
+    const pages = Object.fromEntries((await repo.getPages(october)).map((p) => [p.path, p]))
+    expect(pages['/contact']!.exitRate).toBeGreaterThan(pages['/']!.exitRate + 0.2)
+    expect(pages['/blog/design-tokens']!.exitRate).toBeGreaterThan(pages['/projets']!.exitRate)
+  })
+})

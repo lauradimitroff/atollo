@@ -12,7 +12,7 @@ import { createRandom, hashString, type Random, type Weighted } from '@/shared/l
 import { toDayString } from '../../domain/period'
 import type { Channel, Pageview, Session, Utm } from '../../domain/types'
 import { CITIES, HOUR_CURVES, NEWSLETTER, SEARCH_ENGINES, TECH } from './catalog'
-import { profileFor, type SiteProfile } from './profiles'
+import { profileFor, type PageProfile, type SiteProfile } from './profiles'
 
 /** Traffic volumes in the profiles are expressed at this date; growth is relative to it. */
 const REFERENCE_DATE = new Date(2026, 0, 1)
@@ -78,6 +78,12 @@ function sourceFor(
   }
 }
 
+/**
+ * Chance of viewing another page after this one. Visitors read an article and leave,
+ * but go on from a home page: exit rates differ from page to page, as in real life.
+ */
+const CONTINUE = { rare: 0.65, normal: 0.45, often: 0.16 } as const
+
 function browse(
   profile: SiteProfile,
   random: Random,
@@ -86,33 +92,38 @@ function browse(
 ): { pageviews: Pageview[]; durationS: number } {
   const { entryPages, browsePages } = prepare(profile)
 
-  let count = 1
+  // Pick the next page, avoiding an immediate reload of the same one.
+  const nextAfter = (current: PageProfile) => {
+    const next = random.weighted(browsePages)
+    return next.path === current.path ? random.weighted(browsePages) : next
+  }
+
+  const visited = [random.weighted(entryPages)]
   if (!bounce) {
-    count = 2
-    while (count < MAX_PAGES_PER_SESSION && random.chance(0.45)) count++
+    visited.push(nextAfter(visited[0]!))
+    while (
+      visited.length < MAX_PAGES_PER_SESSION &&
+      random.chance(CONTINUE[visited[visited.length - 1]!.exit ?? 'normal'])
+    ) {
+      visited.push(nextAfter(visited[visited.length - 1]!))
+    }
   }
 
   const pageviews: Pageview[] = []
-  let page = random.weighted(entryPages)
   let time = startedAt
   let durationS = 0
 
-  for (let i = 0; i < count; i++) {
-    const isLast = i === count - 1
+  visited.forEach((page, i) => {
+    const isLast = i === visited.length - 1
     const timeOnPageS = isLast
       ? null
       : Math.max(4, Math.round(random.normal(page.avgTimeS, page.avgTimeS * 0.4)))
     pageviews.push({ path: page.path, viewedAt: time, timeOnPageS })
-
     if (timeOnPageS !== null) {
       time += timeOnPageS * 1000
       durationS += timeOnPageS
-      // Pick the next page, avoiding an immediate reload of the same one.
-      let next = random.weighted(browsePages)
-      if (next.path === page.path) next = random.weighted(browsePages)
-      page = next
     }
-  }
+  })
 
   return { pageviews, durationS }
 }
