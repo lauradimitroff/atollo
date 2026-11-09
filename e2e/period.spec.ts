@@ -33,3 +33,36 @@ test('an invalid period in the URL falls back to 30 days', async ({ page }) => {
   await page.goto('/s/atelier-nord/overview?period=custom&from=2026-99-99&to=nope')
   await expect(page.getByRole('radio', { name: '30 j' })).toBeChecked()
 })
+
+test('a custom range can be picked in the calendar', async ({ page }) => {
+  await page.goto('/s/atelier-nord/overview')
+
+  await page.getByRole('button', { name: /Période personnalisée/ }).click()
+  // The popover is a dialog named after the button that opened it.
+  const calendar = page.getByRole('dialog', { name: /Période personnalisée/ })
+  await expect(calendar).toBeVisible()
+
+  // Pick the 2nd then the 5th day of the first month shown.
+  const days = calendar.locator('[data-reka-calendar-cell-trigger]:not([data-outside-view])')
+  await days.nth(1).click()
+  await days.nth(4).click()
+  await expect(page.getByText('4 jours sélectionnés')).toBeVisible()
+  await page.getByRole('button', { name: 'Appliquer' }).click()
+
+  await expect(page).toHaveURL(/period=custom&from=\d{4}-\d{2}-02&to=\d{4}-\d{2}-05/)
+  // No preset is checked any more.
+  await expect(
+    page.getByRole('radiogroup', { name: 'Période' }).getByRole('radio', { checked: true }),
+  ).toHaveCount(0)
+})
+
+test('12 months shows one point per month, compared with the year before', async ({ page }) => {
+  await page.goto('/s/atelier-nord/overview')
+  await page
+    .getByRole('radiogroup', { name: 'Période' })
+    .getByRole('radio', { name: '12 mois' })
+    .click()
+
+  await expect(page).toHaveURL(/period=12m/)
+  await expect(page.getByRole('heading', { name: 'Visiteurs uniques par mois' })).toBeVisible()
+})

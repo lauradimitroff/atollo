@@ -30,7 +30,7 @@ const TimeseriesChart = defineAsyncComponent({
 })
 
 const metric = useSelectedMetric()
-const { granularity } = usePeriod()
+const { granularity, range } = usePeriod()
 
 const kpis = useAnalyticsQuery((q) => analytics.getKpis(q))
 const series = useAnalyticsQuery(
@@ -38,7 +38,12 @@ const series = useAnalyticsQuery(
   () => metric.value,
 )
 
-const GRANULARITY_LABEL = { hour: 'par heure', day: 'par jour', week: 'par semaine' } as const
+const GRANULARITY_LABEL = {
+  hour: 'par heure',
+  day: 'par jour',
+  week: 'par semaine',
+  month: 'par mois',
+} as const
 
 const chartTitle = computed(
   () => `${METRICS[metric.value].label} ${GRANULARITY_LABEL[granularity.value]}`,
@@ -54,6 +59,9 @@ const chartPoints = computed(
 )
 
 const key = computed(() => metric.value)
+
+// While the period is running, its last point (this hour, day or month) is incomplete.
+const periodRunning = computed(() => range.value.end.getTime() > Date.now())
 </script>
 
 <template>
@@ -98,6 +106,7 @@ const key = computed(() => metric.value)
           :format-value="(v: number) => formatMetric(key, v)"
           :format-axis="(v: number) => formatAxis(key, v)"
           :format-change="(c: number, p: number) => formatChangeBetween(key, c, p)"
+          :last-is-partial="periodRunning"
         />
       </div>
     </section>

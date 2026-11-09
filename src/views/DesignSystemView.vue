@@ -26,7 +26,7 @@ const themeOptions: { value: ThemePreference; label: string }[] = [
 
 // Demo state for the component previews
 const periodOptions = [
-  { value: '24h', label: '24 h' },
+  { value: 'today', label: 'Aujourd’hui' },
   { value: '7d', label: '7 j' },
   { value: '30d', label: '30 j' },
   { value: '90d', label: '90 j' },

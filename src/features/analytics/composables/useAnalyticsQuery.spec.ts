@@ -45,11 +45,11 @@ describe('useAnalyticsQuery', () => {
       return answer.promise.then(() => q.granularity)
     })
 
-    await router.push('/s/atelier-nord/overview?period=24h')
+    await router.push('/s/atelier-nord/overview?period=today')
     await nextTick()
     expect(answers).toHaveLength(2)
 
-    answers[1]!.resolve('') // the newer request (24h) answers first…
+    answers[1]!.resolve('') // the newer request (today) answers first…
     await flushPromises()
     answers[0]!.resolve('') // …then the outdated one (7d)
     await flushPromises()

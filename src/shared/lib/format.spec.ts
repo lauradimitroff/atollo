@@ -15,7 +15,12 @@ describe('formatDateRange', () => {
     expect(formatDateRange(range, NOW)).toBe('20 déc. 2025 – 9 janv. 2026')
   })
 
-  it('shows hours for a 24-hour range', () => {
+  it('shows a single day without a range', () => {
+    const range = { start: new Date(2026, 10, 9), end: new Date(2026, 10, 10) }
+    expect(formatDateRange(range, NOW)).toBe('9 nov.')
+  })
+
+  it('shows hours for a range not aligned on midnight', () => {
     const range = { start: new Date(2026, 10, 8, 15), end: new Date(2026, 10, 9, 15) }
     expect(formatDateRange(range, NOW)).toBe('8 nov., 15:00 – 9 nov., 15:00')
   })

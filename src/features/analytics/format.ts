@@ -51,6 +51,7 @@ const axisFormats: Record<Granularity, Intl.DateTimeFormat> = {
   hour: new Intl.DateTimeFormat('fr-FR', { hour: 'numeric' }),
   day: new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }),
   week: new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }),
+  month: new Intl.DateTimeFormat('fr-FR', { month: 'short' }),
 }
 const tooltipFormats: Record<Granularity, Intl.DateTimeFormat> = {
   hour: new Intl.DateTimeFormat('fr-FR', {
@@ -62,6 +63,7 @@ const tooltipFormats: Record<Granularity, Intl.DateTimeFormat> = {
   }),
   day: new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
   week: new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' }),
+  month: new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }),
 }
 
 /** Labels of a chart point: "9 nov." on the axis, "lundi 9 novembre" in the tooltip. */
@@ -69,7 +71,12 @@ export function bucketLabels(start: number, granularity: Granularity) {
   const tooltip = tooltipFormats[granularity].format(start)
   return {
     axisLabel: axisFormats[granularity].format(start),
-    tooltipLabel: granularity === 'week' ? `Semaine du ${tooltip}` : tooltip,
+    tooltipLabel:
+      granularity === 'week'
+        ? `Semaine du ${tooltip}`
+        : granularity === 'month'
+          ? tooltip.charAt(0).toUpperCase() + tooltip.slice(1)
+          : tooltip,
   }
 }
 

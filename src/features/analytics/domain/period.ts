@@ -5,23 +5,24 @@
  * Conventions:
  * - Ranges are half-open: [start, end). "7 days" = 7 × 24 h ending at the next midnight.
  * - Dates are computed in the browser's local time zone for now.
- *   The site's own time zone will be used once sites carry one (step 5).
+ *   The site's own time zone will be used once sites carry one.
  */
 import {
   addDays,
-  addHours,
   differenceInCalendarDays,
   format,
   isAfter,
   isValid,
   parseISO,
   startOfDay,
-  startOfHour,
+  startOfMonth,
   subDays,
   subHours,
+  subMonths,
+  subYears,
 } from 'date-fns'
 
-export const PERIOD_PRESETS = ['24h', '7d', '30d', '90d'] as const
+export const PERIOD_PRESETS = ['today', '7d', '30d', '90d', '12m'] as const
 export type PeriodPreset = (typeof PERIOD_PRESETS)[number]
 
 /** Days are "YYYY-MM-DD" strings: exactly what the URL holds, no time zone ambiguity. */
@@ -33,7 +34,7 @@ export interface DateRange {
   end: Date
 }
 
-export type Granularity = 'hour' | 'day' | 'week'
+export type Granularity = 'hour' | 'day' | 'week' | 'month'
 
 export const DEFAULT_PERIOD: Period = { preset: '30d' }
 
@@ -41,7 +42,7 @@ export const DEFAULT_PERIOD: Period = { preset: '30d' }
 export const MAX_HISTORY_DAYS = 365
 
 const DAY_FORMAT = 'yyyy-MM-dd'
-const PRESET_DAYS: Record<Exclude<PeriodPreset, '24h'>, number> = { '7d': 7, '30d': 30, '90d': 90 }
+const PRESET_DAYS = { '7d': 7, '30d': 30, '90d': 90 } as const
 
 export function isPreset(value: unknown): value is PeriodPreset {
   return PERIOD_PRESETS.includes(value as PeriodPreset)
@@ -59,9 +60,14 @@ function parseDay(value: unknown): Date | null {
 
 /** Concrete dates covered by a period, relative to `now`. */
 export function resolveRange(period: Period, now: Date = new Date()): DateRange {
-  if (period.preset === '24h') {
-    const end = addHours(startOfHour(now), 1)
-    return { start: subHours(end, 24), end }
+  const tomorrow = addDays(startOfDay(now), 1)
+  if (period.preset === 'today') {
+    return { start: startOfDay(now), end: tomorrow }
+  }
+  if (period.preset === '12m') {
+    // The current month (so far) and the 11 full months before it: month-aligned,
+    // so the chart shows one point per calendar month.
+    return { start: startOfMonth(subMonths(now, 11)), end: tomorrow }
   }
   if (period.preset === 'custom') {
     // Validated by parsePeriod, hence the non-null assertions.
@@ -69,16 +75,20 @@ export function resolveRange(period: Period, now: Date = new Date()): DateRange 
     const to = parseDay(period.to)!
     return { start: startOfDay(from), end: addDays(startOfDay(to), 1) }
   }
-  const end = addDays(startOfDay(now), 1)
-  return { start: subDays(end, PRESET_DAYS[period.preset]), end }
+  return { start: subDays(tomorrow, PRESET_DAYS[period.preset]), end: tomorrow }
 }
 
 /**
- * The period just before, with the same length: the comparison baseline.
- * Calendar-day arithmetic (not milliseconds), so a daylight-saving change
- * inside the range does not shift the comparison by one hour.
+ * The comparison baseline.
+ * - Up to a few months: the period just before, with the same length. Calendar-day
+ *   arithmetic (not milliseconds), so a daylight-saving change does not shift it.
+ * - Monthly charts (about a year): the same dates one year earlier. Comparing
+ *   December with December avoids mixing seasons.
  */
 export function previousRange(range: DateRange, granularity: Granularity): DateRange {
+  if (granularity === 'month') {
+    return { start: subYears(range.start, 1), end: subYears(range.end, 1) }
+  }
   if (granularity === 'hour') {
     const hours = Math.round((range.end.getTime() - range.start.getTime()) / 3_600_000)
     return { start: subHours(range.start, hours), end: range.start }
@@ -92,7 +102,8 @@ export function granularityFor(range: DateRange): Granularity {
   const days = differenceInCalendarDays(range.end, range.start)
   if (days <= 2) return 'hour'
   if (days <= 120) return 'day'
-  return 'week'
+  if (days <= 270) return 'week'
+  return 'month'
 }
 
 /**

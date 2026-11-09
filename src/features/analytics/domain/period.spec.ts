@@ -14,10 +14,16 @@ import {
 const NOW = new Date(2026, 10, 9, 14, 35)
 
 describe('resolveRange', () => {
-  it('24h covers the last 24 full hours, current hour included', () => {
-    const range = resolveRange({ preset: '24h' }, NOW)
-    expect(range.start).toEqual(new Date(2026, 10, 8, 15))
-    expect(range.end).toEqual(new Date(2026, 10, 9, 15))
+  it('today covers the current calendar day, from midnight', () => {
+    const range = resolveRange({ preset: 'today' }, NOW)
+    expect(range.start).toEqual(new Date(2026, 10, 9))
+    expect(range.end).toEqual(new Date(2026, 10, 10))
+  })
+
+  it('12m starts on the first day of the month, 11 months ago', () => {
+    const range = resolveRange({ preset: '12m' }, NOW)
+    expect(range.start).toEqual(new Date(2025, 11, 1))
+    expect(range.end).toEqual(new Date(2026, 10, 10))
   })
 
   it('7d covers 7 calendar days ending tonight at midnight', () => {
@@ -41,11 +47,18 @@ describe('previousRange', () => {
     expect(previous.start).toEqual(new Date(2026, 8, 11))
   })
 
-  it('works in hours for 24h', () => {
-    const range = resolveRange({ preset: '24h' }, NOW)
+  it('compares today with yesterday', () => {
+    const range = resolveRange({ preset: 'today' }, NOW)
     const previous = previousRange(range, 'hour')
-    expect(previous.start).toEqual(new Date(2026, 10, 7, 15))
+    expect(previous.start).toEqual(new Date(2026, 10, 8))
     expect(previous.end).toEqual(range.start)
+  })
+
+  it('compares 12 months with the same dates one year earlier', () => {
+    const range = resolveRange({ preset: '12m' }, NOW)
+    const previous = previousRange(range, 'month')
+    expect(previous.start).toEqual(new Date(2024, 11, 1))
+    expect(previous.end).toEqual(new Date(2025, 10, 10))
   })
 
   it('stays aligned on midnight across a daylight-saving change', () => {
@@ -59,10 +72,11 @@ describe('previousRange', () => {
 
 describe('granularityFor', () => {
   it.each([
-    [{ preset: '24h' } as const, 'hour'],
+    [{ preset: 'today' } as const, 'hour'],
     [{ preset: '7d' } as const, 'day'],
     [{ preset: '90d' } as const, 'day'],
-    [{ preset: 'custom', from: '2026-01-01', to: '2026-11-09' } as const, 'week'],
+    [{ preset: 'custom', from: '2026-04-01', to: '2026-09-30' } as const, 'week'],
+    [{ preset: '12m' } as const, 'month'],
   ])('%o → %s', (period, expected) => {
     expect(granularityFor(resolveRange(period, NOW))).toBe(expected)
   })

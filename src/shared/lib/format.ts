@@ -10,6 +10,9 @@ const dayMonthYear = new Intl.DateTimeFormat('fr-FR', {
   month: 'short',
   year: 'numeric',
 })
+const isMidnight = (date: Date) =>
+  date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0
+
 const dayMonthHour = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
   month: 'short',
@@ -20,15 +23,23 @@ const dayMonthHour = new Intl.DateTimeFormat('fr-FR', {
 /**
  * "11 oct. – 9 nov." for a half-open range [start, end).
  * The year appears only when the range is not entirely in the current year.
- * Ranges shorter than a day show hours: "8 nov. 15:00 – 9 nov. 15:00".
+ * A single whole day shows just that day: "9 nov.".
+ * Ranges not aligned on midnight show hours: "8 nov., 15:00 – 9 nov., 15:00".
  */
 export function formatDateRange(range: { start: Date; end: Date }, now: Date = new Date()): string {
-  const durationHours = (range.end.getTime() - range.start.getTime()) / 3_600_000
-  if (durationHours <= 24) {
+  const lastDay = subMilliseconds(range.end, 1)
+  const wholeDays = isMidnight(range.start) && isMidnight(range.end)
+
+  if (!wholeDays) {
     return `${dayMonthHour.format(range.start)} – ${dayMonthHour.format(range.end)}`
   }
+  // A single day ("today", or a custom range of one day): "9 nov."
+  if (range.start.toDateString() === lastDay.toDateString()) {
+    return (range.start.getFullYear() === now.getFullYear() ? dayMonth : dayMonthYear).format(
+      range.start,
+    )
+  }
 
-  const lastDay = subMilliseconds(range.end, 1)
   const sameYear =
     range.start.getFullYear() === now.getFullYear() && lastDay.getFullYear() === now.getFullYear()
   const formatter = sameYear ? dayMonth : dayMonthYear

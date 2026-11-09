@@ -9,7 +9,7 @@
  * - bounceRate    sessions with a single pageview ÷ sessions (0 → 1)
  * - avgDuration   mean session duration in seconds, bounces counting as 0 s
  */
-import { addDays, addHours, addWeeks } from 'date-fns'
+import { addDays, addHours, addMonths, addWeeks } from 'date-fns'
 
 import { sessionValue } from './filters'
 import type { DateRange, Granularity } from './period'
@@ -120,9 +120,9 @@ export function changeSentiment(key: MetricKey, change: number | null): 'good' |
 // Time series
 // ---------------------------------------------------------------------------
 
-const STEP = { hour: addHours, day: addDays, week: addWeeks } as const
+const STEP = { hour: addHours, day: addDays, week: addWeeks, month: addMonths } as const
 
-/** Start of each chart point over the range: hourly, daily or weekly. */
+/** Start of each chart point over the range: hourly, daily, weekly or monthly. */
 export function bucketStarts(range: DateRange, granularity: Granularity): Date[] {
   const starts: Date[] = []
   for (let t = range.start; t < range.end; t = STEP[granularity](t, 1)) starts.push(t)

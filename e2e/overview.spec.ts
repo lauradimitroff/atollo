@@ -23,7 +23,7 @@ test('changing the period updates the KPIs and the chart resolution', async ({ p
 
   await page
     .getByRole('radiogroup', { name: 'Période' })
-    .getByRole('radio', { name: '24 h' })
+    .getByRole('radio', { name: 'Aujourd’hui' })
     .click()
 
   await expect(page.getByRole('heading', { name: 'Visiteurs uniques par heure' })).toBeVisible()

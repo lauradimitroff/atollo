@@ -31,10 +31,10 @@ describe('usePeriod', () => {
     await router.push('/s/atelier-nord/pages?sort=visitors')
     const { setPreset, period, granularity } = setup()
 
-    await setPreset('24h')
+    await setPreset('today')
 
-    expect(router.currentRoute.value.query).toEqual({ sort: 'visitors', period: '24h' })
-    expect(period.value).toEqual({ preset: '24h' })
+    expect(router.currentRoute.value.query).toEqual({ sort: 'visitors', period: 'today' })
+    expect(period.value).toEqual({ preset: 'today' })
     expect(granularity.value).toBe('hour')
   })
 

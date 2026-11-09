@@ -37,7 +37,21 @@ const props = defineProps<{
   formatValue: (value: number) => string
   formatAxis: (value: number) => string
   formatChange: (current: number, previous: number) => string
+  /**
+   * The last point with a value is still in progress (current hour, day or month):
+   * it is drawn dashed, otherwise its low value would look like a sudden drop.
+   */
+  lastIsPartial?: boolean
 }>()
+
+/** Index of the in-progress point, or -1. */
+const partialIndex = computed(() => {
+  if (!props.lastIsPartial) return -1
+  for (let i = props.points.length - 1; i >= 0; i--) {
+    if (props.points[i]!.current !== null) return i
+  }
+  return -1
+})
 
 /** Option type built from the modules actually registered: typos are caught at compile time. */
 type ChartOption = ComposeOption<
@@ -68,7 +82,9 @@ function tooltipHtml(index: number) {
 
   const current = point.current
   return `<div style="font-family:${SANS};font-size:12px;min-width:180px">
-    <div style="color:${t.fgMuted};margin-bottom:6px">${point.tooltipLabel}</div>
+    <div style="color:${t.fgMuted};margin-bottom:6px">${point.tooltipLabel}${
+      index === partialIndex.value ? ' · en cours' : ''
+    }</div>
     ${current === null ? '' : row(t.accent, false, props.currentLabel, props.formatValue(current))}
     ${row(t.fgSubtle, true, props.previousLabel, props.formatValue(point.previous))}
     ${
@@ -140,7 +156,7 @@ const option = computed<ChartOption>(() => {
       {
         name: props.currentLabel,
         type: 'line',
-        data: props.points.map((p) => p.current),
+        data: props.points.map((p, i) => (i === partialIndex.value ? null : p.current)),
         smooth: 0.25,
         showSymbol: false,
         symbolSize: 8,
@@ -173,6 +189,21 @@ const option = computed<ChartOption>(() => {
             ],
           },
         },
+        emphasis: { focus: 'none', scale: true },
+        z: 2,
+      },
+      {
+        // Last segment, from the last complete point to the one in progress: dashed.
+        name: `${props.currentLabel} (en cours)`,
+        type: 'line',
+        data: props.points.map((p, i) =>
+          i === partialIndex.value || i === partialIndex.value - 1 ? p.current : null,
+        ),
+        smooth: 0.25,
+        showSymbol: false,
+        symbolSize: 8,
+        lineStyle: { width: 2.25, type: [5, 4], color: t.gradC },
+        itemStyle: { color: t.surface, borderColor: t.accent, borderWidth: 2 },
         emphasis: { focus: 'none', scale: true },
         z: 2,
       },
