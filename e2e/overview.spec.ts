@@ -29,3 +29,15 @@ test('changing the period updates the KPIs and the chart resolution', async ({ p
   await expect(page.getByRole('heading', { name: 'Visiteurs uniques par heure' })).toBeVisible()
   await expect(visits).not.toHaveText(thirtyDays!)
 })
+
+test('breakdown cards switch between their tabs', async ({ page }) => {
+  await page.goto('/s/atelier-nord/overview')
+  const sources = page.getByRole('region', { name: 'Sources' })
+
+  await expect(sources.getByText('Recherche organique')).toBeVisible()
+  await sources.getByRole('tab', { name: 'Référents' }).click()
+  await expect(sources.getByText('google.com')).toBeVisible()
+
+  const location = page.getByRole('region', { name: 'Localisation' })
+  await expect(location.getByText('France')).toBeVisible()
+})

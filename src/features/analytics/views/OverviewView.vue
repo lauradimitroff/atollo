@@ -4,7 +4,9 @@ import { RotateCcw } from '@lucide/vue'
 
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
+import BreakdownCard from '../components/BreakdownCard.vue'
 import KpiStrip from '../components/KpiStrip.vue'
+import { DEVICES_TABS, LOCATIONS_TABS, PAGES_TABS, SOURCES_TABS } from '../overview-cards'
 import { useAnalyticsQuery } from '../composables/useAnalyticsQuery'
 import { usePeriod } from '../composables/usePeriod'
 import { useSelectedMetric } from '../composables/useSelectedMetric'
@@ -88,6 +90,11 @@ const key = computed(() => metric.value)
       </div>
     </section>
 
-    <!-- Step 3b: Sources, Pages, Countries and Devices cards go here. -->
+    <div class="grid gap-5 lg:grid-cols-2">
+      <BreakdownCard title="Sources" :tabs="SOURCES_TABS" />
+      <BreakdownCard title="Pages" :tabs="PAGES_TABS" />
+      <BreakdownCard title="Localisation" :tabs="LOCATIONS_TABS" />
+      <BreakdownCard title="Appareils" :tabs="DEVICES_TABS" />
+    </div>
   </div>
 </template>

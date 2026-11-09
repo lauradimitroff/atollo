@@ -15,3 +15,23 @@ export const DEVICE_LABELS: Record<Device, string> = {
   mobile: 'Mobile',
   tablet: 'Tablette',
 }
+
+const regionNames = new Intl.DisplayNames('fr-FR', { type: 'region' })
+
+/** "FR" → "France". Falls back to the code for anything unknown. */
+export function countryName(code: string): string {
+  try {
+    return regionNames.of(code) ?? code
+  } catch {
+    return code
+  }
+}
+
+/**
+ * "FR" → 🇫🇷: a flag emoji is two "regional indicator" letters.
+ * No image to load; Windows shows the two letters instead, which stays readable.
+ */
+export function countryFlag(code: string): string {
+  if (!/^[A-Z]{2}$/.test(code)) return ''
+  return String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65))
+}
