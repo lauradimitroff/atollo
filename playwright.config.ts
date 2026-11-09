@@ -20,9 +20,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   // Chromium desktop + a mobile viewport: enough coverage for the responsive layout.
+  // Tests tagged @desktop / @mobile only run in the matching project.
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'desktop', use: { ...devices['Desktop Chrome'] }, grepInvert: /@mobile/ },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, grepInvert: /@desktop/ },
   ],
   webServer: {
     command: isCI ? 'npm run build-only && npm run preview' : 'npm run dev',

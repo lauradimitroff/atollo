@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 
-import HomeView from './HomeView.vue'
+import DesignSystemView from './DesignSystemView.vue'
 
-describe('HomeView', () => {
+describe('DesignSystemView', () => {
   it('renders the product name', () => {
-    const wrapper = mount(HomeView)
+    const wrapper = mount(DesignSystemView)
     expect(wrapper.get('h1').text()).toBe('Atollo')
   })
 
   it('switches the theme from the radio group', async () => {
-    const wrapper = mount(HomeView)
+    const wrapper = mount(DesignSystemView)
     const dark = wrapper.findAll('[role="radio"]').find((b) => b.text() === 'Sombre')
 
     await dark?.trigger('click')
