@@ -1,6 +1,127 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
 /*
- * Design tokens (colors, typography, radii) are added in step 1.
- * Tailwind v4 is configured here in CSS: there is no tailwind.config.js.
+ * Atollo design tokens — palette "Lagon".
+ *
+ * How it works:
+ * 1. Raw values live in CSS variables on :root (light) and .dark (dark).
+ * 2. `@theme inline` exposes them to Tailwind as utilities
+ *    (bg-surface, text-fg-muted, border-line…).
+ * 3. Switching theme only toggles the `.dark` class on <html>:
+ *    every component follows without a single `dark:` prefix.
  */
+
+/* `dark:` variant driven by the .dark class (not only the OS setting). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --canvas: #f6f8fb;
+  --surface: #ffffff;
+  --surface-muted: #eef2f7;
+  --line: #e1e7ef;
+  --line-strong: #cbd4e1;
+
+  /* Text */
+  --fg: #0e1533;
+  --fg-muted: #5b6683;
+  --fg-subtle: #929bb3;
+
+  /* Brand: analogous trio, darkened for contrast on white */
+  --accent: #2b8fcb;
+  --grad-a: #4f5fd6;
+  --grad-b: #2b8fcb;
+  --grad-c: #1fb3a1;
+  --accent-soft: rgb(43 143 203 / 0.09);
+  --area-opacity: 0.16;
+
+  /* Semantic */
+  --up: #0f8a5f;
+  --down: #e11d48;
+
+  --shadow-xs: 0 1px 2px rgb(14 21 51 / 0.04);
+  --shadow-pop: 0 12px 32px -12px rgb(14 21 51 / 0.22);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --canvas: #080b1f;
+  --surface: #0e1330;
+  --surface-muted: #161c40;
+  --line: #1f2650;
+  --line-strong: #2c3463;
+
+  --fg: #eef1ff;
+  --fg-muted: #9aa3c7;
+  --fg-subtle: #646d96;
+
+  /* Brand: the analogous trio as is */
+  --accent: #79bfe7;
+  --grad-a: #7988e7;
+  --grad-b: #79bfe7;
+  --grad-c: #79e7d8;
+  --accent-soft: rgb(121 191 231 / 0.12);
+  --area-opacity: 0.3;
+
+  --up: #6ee7a8;
+  --down: #fb7185;
+
+  --shadow-xs: none;
+  --shadow-pop: 0 12px 32px -12px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-grad-a: var(--grad-a);
+  --color-grad-b: var(--grad-b);
+  --color-grad-c: var(--grad-c);
+
+  --color-up: var(--up);
+  --color-down: var(--down);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-pop: var(--shadow-pop);
+}
+
+@layer base {
+  html {
+    @apply bg-canvas font-sans text-fg antialiased;
+    font-size: 14px;
+  }
+
+  /* All figures are monospaced with tabular digits: columns stay aligned. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}
+
+@utility bg-brand-gradient {
+  background-image: linear-gradient(90deg, var(--grad-a), var(--grad-b) 50%, var(--grad-c));
+}
+
+@utility text-label {
+  @apply text-[11px] font-medium tracking-[0.08em] text-fg-muted uppercase;
+}

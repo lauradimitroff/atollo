@@ -1,15 +1,155 @@
 <script setup lang="ts">
-// Temporary page: proves the Vue + Router + Tailwind chain works.
-// It is replaced by the app layout in step 1.
+/**
+ * Temporary page: previews the design tokens (step 1a).
+ * It is replaced by the application layout in step 1c.
+ */
+import { useTheme, type ThemePreference } from '@/shared/composables/useTheme'
+
+const { preference, resolved } = useTheme()
+
+const themeOptions: { value: ThemePreference; label: string }[] = [
+  { value: 'light', label: 'Clair' },
+  { value: 'dark', label: 'Sombre' },
+  { value: 'auto', label: 'Système' },
+]
+
+const groups = [
+  {
+    title: 'Surfaces',
+    tokens: [
+      { name: 'canvas', class: 'bg-canvas' },
+      { name: 'surface', class: 'bg-surface' },
+      { name: 'surface-muted', class: 'bg-surface-muted' },
+      { name: 'line', class: 'bg-line' },
+      { name: 'line-strong', class: 'bg-line-strong' },
+    ],
+  },
+  {
+    title: 'Texte',
+    tokens: [
+      { name: 'fg', class: 'bg-fg' },
+      { name: 'fg-muted', class: 'bg-fg-muted' },
+      { name: 'fg-subtle', class: 'bg-fg-subtle' },
+    ],
+  },
+  {
+    title: 'Marque',
+    tokens: [
+      { name: 'grad-a', class: 'bg-grad-a' },
+      { name: 'grad-b / accent', class: 'bg-grad-b' },
+      { name: 'grad-c', class: 'bg-grad-c' },
+      { name: 'accent-soft', class: 'bg-accent-soft' },
+    ],
+  },
+  {
+    title: 'Sémantique',
+    tokens: [
+      { name: 'up', class: 'bg-up' },
+      { name: 'down', class: 'bg-down' },
+    ],
+  },
+]
+
+const typeScale = [
+  { size: 'text-4xl', px: 36, sample: '38 412', mono: true },
+  { size: 'text-[28px]', px: 28, sample: '141 236', mono: true },
+  { size: 'text-xl', px: 20, sample: 'Vue d’ensemble', mono: false },
+  { size: 'text-base', px: 16, sample: 'Visiteurs uniques par jour', mono: false },
+  { size: 'text-sm', px: 14, sample: 'Corps de texte de l’interface', mono: false },
+  { size: 'text-xs', px: 12, sample: '/blog/design-tokens', mono: true },
+]
 </script>
 
 <template>
-  <main class="grid min-h-dvh place-items-center bg-stone-50 p-6 text-stone-900">
-    <div class="text-center">
-      <h1 class="text-3xl font-semibold tracking-tight">Atollo</h1>
-      <p class="mt-2 text-sm text-stone-500">
-        Projet initialisé. Le design system arrive à l'étape 1.
-      </p>
-    </div>
+  <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <header class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="grid size-7 place-items-center rounded-lg bg-brand-gradient">
+          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path
+              d="M1 10 L4 5 L7 7.5 L11 1.5"
+              stroke="white"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+        <div>
+          <h1 class="text-base font-semibold tracking-tight">Atollo</h1>
+          <p class="text-xs text-fg-muted">Design tokens — palette Lagon</p>
+        </div>
+      </div>
+
+      <div
+        class="flex rounded-lg border border-line bg-surface p-0.5 shadow-xs"
+        role="radiogroup"
+        aria-label="Thème"
+      >
+        <button
+          v-for="option in themeOptions"
+          :key="option.value"
+          type="button"
+          role="radio"
+          :aria-checked="preference === option.value"
+          class="rounded-md px-3 py-1 text-[13px] text-fg-muted transition-colors hover:text-fg aria-checked:bg-surface-muted aria-checked:font-medium aria-checked:text-fg"
+          @click="preference = option.value"
+        >
+          {{ option.label }}
+        </button>
+      </div>
+    </header>
+
+    <p class="mt-2 text-xs text-fg-subtle">
+      Thème affiché : <span class="font-mono">{{ resolved }}</span>
+    </p>
+
+    <section v-for="group in groups" :key="group.title" class="mt-10">
+      <h2 class="text-label">{{ group.title }}</h2>
+      <ul class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <li
+          v-for="token in group.tokens"
+          :key="token.name"
+          class="overflow-hidden rounded-xl border border-line bg-surface shadow-xs"
+        >
+          <div class="h-16 border-b border-line" :class="token.class" />
+          <p class="px-3 py-2 font-mono text-xs">{{ token.name }}</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Dégradé signature</h2>
+      <div class="mt-3 h-2 rounded-full bg-brand-gradient" />
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Typographie</h2>
+      <ul class="mt-3 divide-y divide-line rounded-xl border border-line bg-surface shadow-xs">
+        <li
+          v-for="item in typeScale"
+          :key="item.px"
+          class="flex items-baseline justify-between gap-4 px-4 py-3"
+        >
+          <span
+            class="truncate tracking-tight"
+            :class="[item.size, item.mono ? 'font-mono font-medium' : 'font-sans']"
+          >
+            {{ item.sample }}
+          </span>
+          <span class="shrink-0 font-mono text-xs text-fg-subtle">
+            {{ item.px }} px · {{ item.mono ? 'Geist Mono' : 'Geist' }}
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-label">Variations</h2>
+      <div class="mt-3 flex gap-6 font-mono text-sm">
+        <span class="text-up">↗ 12,4 %</span>
+        <span class="text-down">↘ 4,2 %</span>
+      </div>
+    </section>
   </main>
 </template>

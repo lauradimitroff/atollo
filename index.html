@@ -9,6 +9,19 @@
     />
     <link rel="icon" href="/favicon.ico" />
     <title>Atollo</title>
+    <!--
+      Applies the saved theme before the first paint, so a dark-mode user never
+      sees a white flash while Vue loads. Same storage key as useTheme.ts.
+    -->
+    <script>
+      try {
+        const pref = localStorage.getItem('atollo-theme') || 'auto'
+        const dark =
+          pref === 'dark' ||
+          (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.classList.toggle('dark', dark)
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="app"></div>
