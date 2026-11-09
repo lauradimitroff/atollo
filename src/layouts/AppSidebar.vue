@@ -11,6 +11,7 @@ import {
   Settings,
 } from '@lucide/vue'
 
+import { useFilters } from '@/features/analytics/composables/useFilters'
 import { usePeriod } from '@/features/analytics/composables/usePeriod'
 import SiteSwitcher from '@/features/sites/components/SiteSwitcher.vue'
 import { useCurrentSite } from '@/features/sites/composables/useCurrentSite'
@@ -26,6 +27,7 @@ interface NavItem {
 
 const { site } = useCurrentSite()
 const { query: periodQuery } = usePeriod()
+const { query: filtersQuery } = useFilters()
 const route = useRoute()
 
 function isActive(item: NavItem, linkActive: boolean) {
@@ -34,8 +36,8 @@ function isActive(item: NavItem, linkActive: boolean) {
 
 const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
   const params = { siteId: site.value.id }
-  // Analytics links carry the period, so moving between pages keeps it.
-  const query = periodQuery.value
+  // Analytics links carry the period and filters, so moving between pages keeps them.
+  const query = { ...periodQuery.value, ...filtersQuery.value }
   return [
     {
       title: 'Analyse',
@@ -112,7 +114,7 @@ const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
       </span>
       <span class="min-w-0 leading-tight">
         <span class="block truncate text-[13px] font-medium">Compte démo</span>
-        <span class="block text-xs text-fg-muted">Espace démo</span>
+        <span class="block text-xs text-fg-muted">Données fictives</span>
       </span>
     </RouterLink>
   </div>

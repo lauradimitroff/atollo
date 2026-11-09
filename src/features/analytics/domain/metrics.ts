@@ -11,6 +11,7 @@
  */
 import { addDays, addHours, addWeeks } from 'date-fns'
 
+import { sessionValue } from './filters'
 import type { DateRange, Granularity } from './period'
 import type { Session } from './types'
 
@@ -194,19 +195,6 @@ export type Dimension =
   | 'entryPage'
   | 'exitPage'
 
-const DIMENSION_KEY: Record<Dimension, (s: Session) => string | null> = {
-  channel: (s) => s.channel,
-  referrer: (s) => s.referrer,
-  campaign: (s) => s.utm?.campaign ?? null,
-  country: (s) => s.country,
-  city: (s) => `${s.country}:${s.city}`,
-  device: (s) => s.device,
-  browser: (s) => s.browser,
-  os: (s) => s.os,
-  entryPage: (s) => s.pageviews[0]!.path,
-  exitPage: (s) => s.pageviews[s.pageviews.length - 1]!.path,
-}
-
 export interface BreakdownRow {
   key: string
   visitors: number
@@ -222,12 +210,11 @@ export interface BreakdownRow {
  * from two channels is, rightly, a visitor of both.
  */
 export function breakdown(sessions: readonly Session[], dimension: Dimension): BreakdownRow[] {
-  const keyOf = DIMENSION_KEY[dimension]
   const groups = new Map<string, { visitors: Set<string>; visits: number }>()
   let total = 0
 
   for (const session of sessions) {
-    const key = keyOf(session)
+    const key = sessionValue(session, dimension)
     if (key === null) continue
     total++
     let group = groups.get(key)

@@ -8,6 +8,6 @@ import EmptyState from '@/shared/ui/EmptyState.vue'
   <EmptyState
     :icon="UserRound"
     title="Profil à venir"
-    description="Nom, avatar et adresse e-mail seront modifiables à l’étape 5, avec l’authentification."
+    description="Nom, avatar et adresse e-mail seront modifiables avec l’arrivée des comptes utilisateurs."
   />
 </template>

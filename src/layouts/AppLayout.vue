@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { X } from '@lucide/vue'
 import {
@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from 'reka-ui'
 
+import FilterBar from '@/features/analytics/components/FilterBar.vue'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import AppSidebar from './AppSidebar.vue'
 import AppTopbar from './AppTopbar.vue'
@@ -23,8 +24,10 @@ import AppTopbar from './AppTopbar.vue'
  */
 const drawerOpen = ref(false)
 
-// Close the drawer after navigating from it.
 const route = useRoute()
+const isAnalyticsPage = computed(() => typeof route.params.siteId === 'string')
+
+// Close the drawer after navigating from it.
 watch(
   () => route.fullPath,
   () => {
@@ -75,6 +78,8 @@ watch(
     <div class="flex min-w-0 flex-col">
       <AppTopbar @open-menu="drawerOpen = true" />
       <main id="main" tabindex="-1" class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-7">
+        <!-- Cross filters apply to every analytics page of the site. -->
+        <FilterBar v-if="isAnalyticsPage" class="mb-5" />
         <RouterView />
       </main>
     </div>

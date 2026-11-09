@@ -1,6 +1,7 @@
 import { breakdown, compare, pageStats, summarize, timeseries } from '../../domain/metrics'
-import { elapsedRanges } from '../../domain/period'
-import type { AnalyticsRepository } from '../repository'
+import { applyFilters } from '../../domain/filters'
+import { elapsedRanges, type DateRange } from '../../domain/period'
+import type { AnalyticsQuery, AnalyticsRepository } from '../repository'
 import { getSessions } from './sessions'
 
 interface Options {
@@ -20,6 +21,11 @@ export function createMockRepository({
     await new Promise((resolve) => setTimeout(resolve, min + Math.random() * (max - min)))
   }
 
+  /** Sessions of the query's site over a range, with the cross filters applied. */
+  function sessions(query: AnalyticsQuery, range: DateRange, clock: Date) {
+    return applyFilters(getSessions(query.siteId, range, clock), query.filters)
+  }
+
   return {
     async getKpis(query) {
       await delay()
@@ -27,8 +33,8 @@ export function createMockRepository({
       // Same elapsed time on both sides while the period is running (see elapsedRanges).
       const ranges = elapsedRanges(query.range, query.comparisonRange, clock)
       return compare(
-        summarize(getSessions(query.siteId, ranges.current, clock)),
-        summarize(getSessions(query.siteId, ranges.comparison, clock)),
+        summarize(sessions(query, ranges.current, clock)),
+        summarize(sessions(query, ranges.comparison, clock)),
       )
     },
 
@@ -36,10 +42,10 @@ export function createMockRepository({
       await delay()
       const clock = now()
       return timeseries(
-        { range: query.range, sessions: getSessions(query.siteId, query.range, clock) },
+        { range: query.range, sessions: sessions(query, query.range, clock) },
         {
           range: query.comparisonRange,
-          sessions: getSessions(query.siteId, query.comparisonRange, clock),
+          sessions: sessions(query, query.comparisonRange, clock),
         },
         query.granularity,
         metric,
@@ -49,12 +55,12 @@ export function createMockRepository({
 
     async getBreakdown(query, dimension) {
       await delay()
-      return breakdown(getSessions(query.siteId, query.range, now()), dimension)
+      return breakdown(sessions(query, query.range, now()), dimension)
     },
 
     async getPages(query) {
       await delay()
-      return pageStats(getSessions(query.siteId, query.range, now()))
+      return pageStats(sessions(query, query.range, now()))
     },
   }
 }

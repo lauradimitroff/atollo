@@ -8,6 +8,6 @@ import EmptyState from '@/shared/ui/EmptyState.vue'
   <EmptyState
     :icon="Globe"
     title="Gestion des sites à venir"
-    description="Ajout, modification et suppression des sites arrivent à l’étape 5."
+    description="Ajout, modification et suppression des sites arriveront avec les comptes utilisateurs."
   />
 </template>

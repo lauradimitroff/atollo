@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import { withoutFilters } from '@/features/analytics/domain/filters'
 import { DEMO_SITES, findSite } from '../demo-sites'
 
 /**
@@ -19,13 +20,16 @@ export function useCurrentSite() {
     return (typeof id === 'string' && findSite(id)) || sites[0]!
   })
 
-  /** Opens another site, staying on the same analytics page when there is one. */
+  /**
+   * Opens another site, staying on the same analytics page with the same period.
+   * Filters are dropped: "/tarifs" or a campaign of one site means nothing on another.
+   */
   function switchSite(siteId: string) {
     const isSitePage = typeof route.params.siteId === 'string' && route.name
     return router.push({
       name: isSitePage ? route.name : 'overview',
       params: { siteId },
-      query: isSitePage ? route.query : undefined,
+      query: isSitePage ? withoutFilters(route.query) : undefined,
     })
   }
 

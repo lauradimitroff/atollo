@@ -2,6 +2,7 @@
 import { computed, defineAsyncComponent } from 'vue'
 import { RotateCcw } from '@lucide/vue'
 
+import ChartLoadError from '@/shared/charts/ChartLoadError.vue'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
 import BreakdownCard from '../components/BreakdownCard.vue'
@@ -15,7 +16,18 @@ import { METRICS } from '../domain/metrics'
 import { bucketLabels, formatAxis, formatChangeBetween, formatMetric } from '../format'
 
 // The chart pulls ECharts in: loaded as a separate chunk, after the KPIs.
-const TimeseriesChart = defineAsyncComponent(() => import('@/shared/charts/TimeseriesChart.vue'))
+// If that download fails, retry twice, then show an explicit error instead of a blank space.
+const TimeseriesChart = defineAsyncComponent({
+  loader: () => import('@/shared/charts/TimeseriesChart.vue'),
+  loadingComponent: BaseSkeleton,
+  errorComponent: ChartLoadError,
+  onError: (error, retry, fail, attempts) => {
+    if (attempts <= 2) return retry()
+    // Visible in the browser console: tells whether it is a network or blocker issue.
+    console.error('[Atollo] Le code du graphique n’a pas pu être chargé :', error)
+    fail()
+  },
+})
 
 const metric = useSelectedMetric()
 const { granularity } = usePeriod()

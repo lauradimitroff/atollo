@@ -30,6 +30,7 @@ const asMono = (key: string) => ({ label: key, mono: true })
 export const SOURCES_TABS: BreakdownTab[] = [
   {
     key: 'channels',
+    filterDimension: 'channel',
     label: 'Canaux',
     columnLabel: 'Canal',
     valueLabel: 'Visites',
@@ -37,6 +38,7 @@ export const SOURCES_TABS: BreakdownTab[] = [
   },
   {
     key: 'referrers',
+    filterDimension: 'referrer',
     label: 'Référents',
     columnLabel: 'Site',
     valueLabel: 'Visites',
@@ -44,6 +46,7 @@ export const SOURCES_TABS: BreakdownTab[] = [
   },
   {
     key: 'campaigns',
+    filterDimension: 'campaign',
     label: 'Campagnes',
     columnLabel: 'Campagne',
     valueLabel: 'Visites',
@@ -54,6 +57,7 @@ export const SOURCES_TABS: BreakdownTab[] = [
 export const PAGES_TABS: BreakdownTab[] = [
   {
     key: 'top',
+    filterDimension: 'page',
     label: 'Populaires',
     columnLabel: 'Page',
     valueLabel: 'Visiteurs',
@@ -70,6 +74,7 @@ export const PAGES_TABS: BreakdownTab[] = [
   },
   {
     key: 'entries',
+    filterDimension: 'entryPage',
     label: 'Entrées',
     columnLabel: 'Page d’entrée',
     valueLabel: 'Visites',
@@ -77,6 +82,7 @@ export const PAGES_TABS: BreakdownTab[] = [
   },
   {
     key: 'exits',
+    filterDimension: 'exitPage',
     label: 'Sorties',
     columnLabel: 'Page de sortie',
     valueLabel: 'Visites',
@@ -87,6 +93,7 @@ export const PAGES_TABS: BreakdownTab[] = [
 export const LOCATIONS_TABS: BreakdownTab[] = [
   {
     key: 'countries',
+    filterDimension: 'country',
     label: 'Pays',
     columnLabel: 'Pays',
     valueLabel: 'Visites',
@@ -94,6 +101,7 @@ export const LOCATIONS_TABS: BreakdownTab[] = [
   },
   {
     key: 'cities',
+    filterDimension: 'city',
     label: 'Villes',
     columnLabel: 'Ville',
     valueLabel: 'Visites',
@@ -108,6 +116,7 @@ export const LOCATIONS_TABS: BreakdownTab[] = [
 export const DEVICES_TABS: BreakdownTab[] = [
   {
     key: 'devices',
+    filterDimension: 'device',
     label: 'Appareils',
     columnLabel: 'Appareil',
     valueLabel: 'Visites',
@@ -115,6 +124,7 @@ export const DEVICES_TABS: BreakdownTab[] = [
   },
   {
     key: 'browsers',
+    filterDimension: 'browser',
     label: 'Navigateurs',
     columnLabel: 'Navigateur',
     valueLabel: 'Visites',
@@ -122,6 +132,7 @@ export const DEVICES_TABS: BreakdownTab[] = [
   },
   {
     key: 'os',
+    filterDimension: 'os',
     label: 'Systèmes',
     columnLabel: 'Système',
     valueLabel: 'Visites',

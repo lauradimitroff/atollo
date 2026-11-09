@@ -16,7 +16,7 @@ export default defineConfig({
   workers: isCI ? 1 : undefined,
   reporter: isCI ? 'github' : 'html',
   use: {
-    baseURL: isCI ? 'http://localhost:4173' : 'http://localhost:5173',
+    baseURL: isCI ? 'http://localhost:4173' : 'http://localhost:5191',
     trace: 'on-first-retry',
   },
   // Chromium desktop + a mobile viewport: enough coverage for the responsive layout.
@@ -26,8 +26,14 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] }, grepInvert: /@desktop/ },
   ],
   webServer: {
-    command: isCI ? 'npm run build-only && npm run preview' : 'npm run dev',
-    port: isCI ? 4173 : 5173,
-    reuseExistingServer: !isCI,
+    // Own, uncommon port: never mixed up with a dev server (5173, 5174…).
+    command: isCI
+      ? 'npm run build-only && npm run preview'
+      : 'npm run dev -- --port 5191 --strictPort',
+    port: isCI ? 4173 : 5191,
+    env: { E2E: '1' },
+    // Always start our own server: reusing whatever answers on the port could test
+    // another project by mistake. A busy port now fails loudly instead.
+    reuseExistingServer: false,
   },
 })

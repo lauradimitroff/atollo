@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from 'vitest'
 
+import type { Filter } from '../../domain/filters'
 import { granularityFor, previousRange, resolveRange, type Period } from '../../domain/period'
 import type { AnalyticsQuery } from '../repository'
 import { createMockRepository } from './mock.repository'
@@ -11,10 +12,10 @@ import { createMockRepository } from './mock.repository'
 const NOW = new Date(2026, 10, 9, 14, 35)
 const repo = createMockRepository({ latency: [0, 0], now: () => NOW })
 
-function queryFor(period: Period, siteId = 'atelier-nord'): AnalyticsQuery {
+function queryFor(period: Period, siteId = 'atelier-nord', filters: Filter[] = []): AnalyticsQuery {
   const range = resolveRange(period, NOW)
   const granularity = granularityFor(range)
-  return { siteId, range, granularity, comparisonRange: previousRange(range, granularity) }
+  return { siteId, range, granularity, comparisonRange: previousRange(range, granularity), filters }
 }
 
 // A finished period: no clipping to "now", every total is directly comparable.
@@ -81,5 +82,48 @@ describe('mock repository consistency', () => {
     // "Today" is 14:35: comparing with a full previous day would halve the numbers.
     const today = await repo.getKpis(queryFor({ preset: '7d' }))
     expect(today.visits.change).toBeGreaterThan(-0.3)
+  })
+})
+
+describe('cross filters', () => {
+  const organic = queryFor(
+    { preset: 'custom', from: '2026-10-01', to: '2026-10-31' },
+    'atelier-nord',
+    [{ dimension: 'channel', value: 'organic' }],
+  )
+
+  it('filtered visits equal the row that was clicked', async () => {
+    const [channels, filtered] = await Promise.all([
+      repo.getBreakdown(october, 'channel'),
+      repo.getKpis(organic),
+    ])
+    const organicRow = channels.find((row) => row.key === 'organic')!
+    expect(filtered.visits.current).toBe(organicRow.visits)
+    expect(filtered.visitors.current).toBe(organicRow.visitors)
+  })
+
+  it('filters the comparison period too', async () => {
+    const september = queryFor(
+      { preset: 'custom', from: '2026-08-31', to: '2026-09-30' },
+      'atelier-nord',
+      [{ dimension: 'channel', value: 'organic' }],
+    )
+    const [octoberKpis, septemberKpis] = await Promise.all([
+      repo.getKpis(organic),
+      repo.getKpis(september),
+    ])
+    expect(octoberKpis.visits.previous).toBe(septemberKpis.visits.current)
+  })
+
+  it('combines filters across cards', async () => {
+    const mobileOrganic = {
+      ...organic,
+      filters: [...organic.filters, { dimension: 'device' as const, value: 'mobile' }],
+    }
+    const [devices, kpis] = await Promise.all([
+      repo.getBreakdown(organic, 'device'),
+      repo.getKpis(mobileOrganic),
+    ])
+    expect(kpis.visits.current).toBe(devices.find((row) => row.key === 'mobile')!.visits)
   })
 })

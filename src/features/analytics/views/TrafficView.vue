@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Activity } from '@lucide/vue'
 
-import EmptyState from '@/shared/ui/EmptyState.vue'
+import DetailComingSoon from '../components/DetailComingSoon.vue'
 </script>
 
 <template>
-  <EmptyState
+  <DetailComingSoon
     :icon="Activity"
-    title="Analyse du trafic à venir"
-    description="Sources, sites référents et campagnes marketing arrivent à l’étape 4."
+    title="Analyse détaillée du trafic bientôt disponible"
+    description="Courbe par canal et tableaux complets des référents et des campagnes. L’essentiel est déjà dans la carte Sources de la vue d’ensemble."
   />
 </template>

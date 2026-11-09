@@ -1,4 +1,5 @@
 import type { AnalyticsQuery } from '../data'
+import type { FilterDimension } from '../domain/filters'
 
 /** One displayable row, whatever the dimension (channel, page, country…). */
 export interface BreakdownItem {
@@ -19,5 +20,7 @@ export interface BreakdownTab {
   label: string
   columnLabel: string
   valueLabel: string
+  /** Clicking a row filters the whole dashboard on this dimension. */
+  filterDimension: FilterDimension
   load: (query: AnalyticsQuery) => Promise<BreakdownItem[]>
 }

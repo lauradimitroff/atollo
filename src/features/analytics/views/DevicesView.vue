@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { MonitorSmartphone } from '@lucide/vue'
 
-import EmptyState from '@/shared/ui/EmptyState.vue'
+import DetailComingSoon from '../components/DetailComingSoon.vue'
 </script>
 
 <template>
-  <EmptyState
+  <DetailComingSoon
     :icon="MonitorSmartphone"
-    title="Appareils à venir"
-    description="La répartition par appareil, navigateur et système arrive à l’étape 4."
+    title="Analyse détaillée des appareils bientôt disponible"
+    description="Répartition complète par appareil, navigateur et système. L’essentiel est déjà dans la carte Appareils de la vue d’ensemble."
   />
 </template>

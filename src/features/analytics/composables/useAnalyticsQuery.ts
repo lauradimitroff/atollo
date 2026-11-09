@@ -2,6 +2,7 @@ import { computed, onScopeDispose, ref, shallowRef, watch, type Ref } from 'vue'
 
 import { useCurrentSite } from '@/features/sites/composables/useCurrentSite'
 import type { AnalyticsQuery } from '../data'
+import { useFilters } from './useFilters'
 import { usePeriod } from './usePeriod'
 
 export interface AnalyticsQueryState<T> {
@@ -14,8 +15,8 @@ export interface AnalyticsQueryState<T> {
 }
 
 /**
- * Loads a statistic for the current site and period, and reloads it whenever
- * either changes.
+ * Loads a statistic for the current site, period and filters, and reloads it
+ * whenever one of them changes.
  *
  *   const { data: kpis, loading } = useAnalyticsQuery((q) => analytics.getKpis(q))
  *
@@ -34,12 +35,14 @@ export function useAnalyticsQuery<T>(
 ): AnalyticsQueryState<T> {
   const { site } = useCurrentSite()
   const { range, comparisonRange, granularity } = usePeriod()
+  const { filters } = useFilters()
 
   const query = computed<AnalyticsQuery>(() => ({
     siteId: site.value.id,
     range: range.value,
     comparisonRange: comparisonRange.value,
     granularity: granularity.value,
+    filters: filters.value,
   }))
 
   // shallowRef: results are replaced as a whole, no need to make every row reactive.

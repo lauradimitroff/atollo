@@ -1,3 +1,4 @@
+import type { Filter } from '../domain/filters'
 import type { DateRange, Granularity } from '../domain/period'
 import type {
   BreakdownRow,
@@ -8,12 +9,14 @@ import type {
   TimeseriesPoint,
 } from '../domain/metrics'
 
-/** Everything a statistic depends on: which site, which period, compared to what. */
+/** Everything a statistic depends on: which site, which period, compared to what, filtered how. */
 export interface AnalyticsQuery {
   siteId: string
   range: DateRange
   comparisonRange: DateRange
   granularity: Granularity
+  /** Cross filters (AND), applied to both the period and its comparison. */
+  filters: Filter[]
 }
 
 /**

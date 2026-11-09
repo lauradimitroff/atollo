@@ -8,6 +8,6 @@ import EmptyState from '@/shared/ui/EmptyState.vue'
   <EmptyState
     :icon="KeyRound"
     title="Compte à venir"
-    description="Mot de passe et suppression du compte arrivent à l’étape 5."
+    description="Mot de passe et suppression du compte arriveront avec les comptes utilisateurs."
   />
 </template>

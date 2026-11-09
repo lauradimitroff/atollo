@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Globe } from '@lucide/vue'
 
-import EmptyState from '@/shared/ui/EmptyState.vue'
+import DetailComingSoon from '../components/DetailComingSoon.vue'
 </script>
 
 <template>
-  <EmptyState
+  <DetailComingSoon
     :icon="Globe"
-    title="Géolocalisation à venir"
-    description="La carte interactive et la répartition par pays arrivent à l’étape 4."
+    title="Carte des visiteurs bientôt disponible"
+    description="Carte interactive et répartition complète par pays et par ville. L’essentiel est déjà dans la carte Localisation de la vue d’ensemble."
   />
 </template>

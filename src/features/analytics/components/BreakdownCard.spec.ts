@@ -16,6 +16,7 @@ function tabs(): BreakdownTab[] {
   return [
     {
       key: 'channels',
+      filterDimension: 'channel',
       label: 'Canaux',
       columnLabel: 'Canal',
       valueLabel: 'Visites',
@@ -26,6 +27,7 @@ function tabs(): BreakdownTab[] {
     },
     {
       key: 'campaigns',
+      filterDimension: 'campaign',
       label: 'Campagnes',
       columnLabel: 'Campagne',
       valueLabel: 'Visites',
@@ -59,7 +61,7 @@ describe('BreakdownCard', () => {
 
   it('sizes bars relative to the largest row', async () => {
     const wrapper = await mountCard(tabs())
-    const bars = wrapper.findAll('li [aria-hidden="true"]').map((b) => b.attributes('style'))
+    const bars = wrapper.findAll('li span[style]').map((b) => b.attributes('style'))
 
     expect(bars[0]).toContain('width: 100%')
     expect(bars[1]).toMatch(/width: 66\.6+\d*%/)
@@ -76,6 +78,21 @@ describe('BreakdownCard', () => {
 
     expect(cardTabs[1]!.load).toHaveBeenCalledOnce()
     expect(wrapper.text()).toContain('Aucune donnée sur cette période.')
+    wrapper.unmount()
+  })
+
+  it('filters the dashboard when a row is clicked, and unfilters on second click', async () => {
+    const wrapper = await mountCard(tabs())
+    const direct = wrapper.findAll('button[aria-pressed]')[0]!
+
+    await direct.trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query.channel).toBe('Direct')
+    expect(direct.attributes('aria-pressed')).toBe('true')
+
+    await direct.trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query.channel).toBeUndefined()
     wrapper.unmount()
   })
 })

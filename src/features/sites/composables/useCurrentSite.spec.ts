@@ -43,4 +43,13 @@ describe('useCurrentSite', () => {
 
     expect(router.currentRoute.value.fullPath).toBe('/s/studio-brume/overview')
   })
+
+  it('drops the filters, which only make sense on the previous site', async () => {
+    await router.push('/s/atelier-nord/pages?period=7d&page=/tarifs&device=mobile')
+    const { switchSite } = setup()
+
+    await switchSite('studio-brume')
+
+    expect(router.currentRoute.value.fullPath).toBe('/s/studio-brume/pages?period=7d')
+  })
 })
