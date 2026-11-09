@@ -61,7 +61,7 @@ export const PROFILES: Record<string, SiteProfile> = {
     season: { amplitude: 0.1, peakDayOfYear: 280 },
     hourCurve: 'office',
     returningRate: 0.32,
-    visitorPool: 9000,
+    visitorPool: 2500,
     channels: [
       ['organic', 42],
       ['direct', 25],
@@ -129,7 +129,7 @@ export const PROFILES: Record<string, SiteProfile> = {
     season: { amplitude: 0.22, peakDayOfYear: 150 },
     hourCurve: 'evening',
     returningRate: 0.24,
-    visitorPool: 6000,
+    visitorPool: 1800,
     channels: [
       ['social', 38],
       ['organic', 26],
@@ -195,7 +195,7 @@ export const PROFILES: Record<string, SiteProfile> = {
     season: { amplitude: 0.16, peakDayOfYear: 355 },
     hourCurve: 'morning',
     returningRate: 0.46,
-    visitorPool: 2200,
+    visitorPool: 600,
     channels: [
       ['direct', 38],
       ['organic', 34],

@@ -50,3 +50,10 @@ export function formatDuration(totalSeconds: number): string {
   if (minutes < 60) return `${minutes} min ${String(seconds % 60).padStart(2, '0')} s`
   return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')} min`
 }
+
+const percent = new Intl.NumberFormat('fr-FR', { style: 'percent', maximumFractionDigits: 1 })
+
+/** 0.413 → "41,3 %". */
+export function formatPercent(ratio: number): string {
+  return percent.format(ratio)
+}

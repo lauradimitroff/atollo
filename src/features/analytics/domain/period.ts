@@ -128,3 +128,25 @@ export function periodToQuery(period: Period): Record<string, string> {
   if (period.preset === DEFAULT_PERIOD.preset) return {}
   return { period: period.preset }
 }
+
+/**
+ * Fair comparison for a period that is still running.
+ * At 10:00, "7 days" holds 6 full days + 10 hours of today. Comparing it with 7 full
+ * previous days would always show a drop. Both ranges are cut to the same elapsed
+ * time: 6 days 10 hours each.
+ */
+export function elapsedRanges(
+  range: DateRange,
+  comparison: DateRange,
+  now: Date = new Date(),
+): { current: DateRange; comparison: DateRange } {
+  if (now >= range.end) return { current: range, comparison }
+  const elapsed = Math.max(0, now.getTime() - range.start.getTime())
+  return {
+    current: { start: range.start, end: new Date(range.start.getTime() + elapsed) },
+    comparison: {
+      start: comparison.start,
+      end: new Date(Math.min(comparison.start.getTime() + elapsed, comparison.end.getTime())),
+    },
+  }
+}

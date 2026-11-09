@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import RawSessionsPreview from '../components/RawSessionsPreview.vue'
+import StatsPreview from '../components/StatsPreview.vue'
 </script>
 
 <template>
   <!-- Replaced by the real overview (KPIs, chart, breakdowns) in step 3. -->
-  <RawSessionsPreview />
+  <StatsPreview />
 </template>

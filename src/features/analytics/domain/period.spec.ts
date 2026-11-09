@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   DEFAULT_PERIOD,
+  elapsedRanges,
   granularityFor,
   parsePeriod,
   periodToQuery,
@@ -102,5 +103,25 @@ describe('periodToQuery', () => {
     const period = { preset: 'custom', from: '2026-10-01', to: '2026-10-15' } as const
     expect(parsePeriod(periodToQuery(period), NOW)).toEqual(period)
     expect(parsePeriod(periodToQuery({ preset: '90d' }), NOW)).toEqual({ preset: '90d' })
+  })
+})
+
+describe('elapsedRanges', () => {
+  it('cuts both ranges to the same elapsed time while the period is running', () => {
+    const range = resolveRange({ preset: '7d' }, NOW)
+    const { current, comparison } = elapsedRanges(range, previousRange(range, 'day'), NOW)
+
+    expect(current.end).toEqual(NOW)
+    // 6 days 14 h 35 min after the start, in both periods.
+    expect(comparison.end.getTime() - comparison.start.getTime()).toBe(
+      current.end.getTime() - current.start.getTime(),
+    )
+    expect(comparison.end).toEqual(new Date(2026, 10, 2, 14, 35))
+  })
+
+  it('leaves a finished period untouched', () => {
+    const range = resolveRange({ preset: 'custom', from: '2026-10-01', to: '2026-10-15' }, NOW)
+    const previous = previousRange(range, 'day')
+    expect(elapsedRanges(range, previous, NOW)).toEqual({ current: range, comparison: previous })
   })
 })
