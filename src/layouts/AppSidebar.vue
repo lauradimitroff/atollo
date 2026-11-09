@@ -11,6 +11,7 @@ import {
   Settings,
 } from '@lucide/vue'
 
+import { usePeriod } from '@/features/analytics/composables/usePeriod'
 import SiteSwitcher from '@/features/sites/components/SiteSwitcher.vue'
 import { useCurrentSite } from '@/features/sites/composables/useCurrentSite'
 import AppLogo from './AppLogo.vue'
@@ -24,6 +25,7 @@ interface NavItem {
 }
 
 const { site } = useCurrentSite()
+const { query: periodQuery } = usePeriod()
 const route = useRoute()
 
 function isActive(item: NavItem, linkActive: boolean) {
@@ -32,15 +34,21 @@ function isActive(item: NavItem, linkActive: boolean) {
 
 const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
   const params = { siteId: site.value.id }
+  // Analytics links carry the period, so moving between pages keeps it.
+  const query = periodQuery.value
   return [
     {
       title: 'Analyse',
       items: [
-        { label: 'Vue d’ensemble', icon: LayoutGrid, to: { name: 'overview', params } },
-        { label: 'Trafic', icon: Activity, to: { name: 'traffic', params } },
-        { label: 'Pages', icon: FileText, to: { name: 'pages', params } },
-        { label: 'Localisation', icon: Globe, to: { name: 'locations', params } },
-        { label: 'Appareils', icon: MonitorSmartphone, to: { name: 'devices', params } },
+        { label: 'Vue d’ensemble', icon: LayoutGrid, to: { name: 'overview', params, query } },
+        { label: 'Trafic', icon: Activity, to: { name: 'traffic', params, query } },
+        { label: 'Pages', icon: FileText, to: { name: 'pages', params, query } },
+        { label: 'Localisation', icon: Globe, to: { name: 'locations', params, query } },
+        {
+          label: 'Appareils',
+          icon: MonitorSmartphone,
+          to: { name: 'devices', params, query },
+        },
       ],
     },
     {

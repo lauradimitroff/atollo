@@ -2,6 +2,9 @@ import { fileURLToPath } from 'node:url'
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config.ts'
 
+// Date tests (daylight saving, midnight boundaries) must not depend on the machine's time zone.
+process.env.TZ = 'Europe/Paris'
+
 export default mergeConfig(
   viteConfig,
   defineConfig({

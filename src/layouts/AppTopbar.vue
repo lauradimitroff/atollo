@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Menu } from '@lucide/vue'
 
+import { usePeriod } from '@/features/analytics/composables/usePeriod'
+import type { PeriodPreset } from '@/features/analytics/domain/period'
+import { formatDateRange } from '@/shared/lib/format'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSegmentedControl from '@/shared/ui/BaseSegmentedControl.vue'
 import ThemeMenu from './ThemeMenu.vue'
@@ -10,18 +13,27 @@ import ThemeMenu from './ThemeMenu.vue'
 defineEmits<{ openMenu: [] }>()
 
 const route = useRoute()
+const { period, range, setPreset } = usePeriod()
 
 const isAnalyticsPage = computed(() => typeof route.params.siteId === 'string')
 
-// Local state for now: in step 2 the period moves to the URL (?period=30d)
-// and drives the data shown on every analytics page.
-const periodOptions = [
+const periodOptions: { value: PeriodPreset; label: string }[] = [
   { value: '24h', label: '24 h' },
   { value: '7d', label: '7 j' },
   { value: '30d', label: '30 j' },
   { value: '90d', label: '90 j' },
-] as const
-const period = ref<(typeof periodOptions)[number]['value']>('30d')
+]
+
+// Bridges the URL period and the segmented control.
+// A custom range (calendar, step 3) simply leaves no preset checked.
+const presetModel = computed({
+  get: () => period.value.preset,
+  set: (value) => {
+    if (value !== 'custom') setPreset(value)
+  },
+})
+
+const rangeLabel = computed(() => formatDateRange(range.value))
 </script>
 
 <template>
@@ -48,8 +60,15 @@ const period = ref<(typeof periodOptions)[number]['value']>('30d')
     </div>
 
     <!-- Full-width second row on phones, inline from `sm` up. -->
-    <div v-if="isAnalyticsPage" class="order-3 w-full overflow-x-auto sm:order-2 sm:w-auto">
-      <BaseSegmentedControl v-model="period" :options="periodOptions" label="Période" />
+    <div
+      v-if="isAnalyticsPage"
+      class="order-3 flex w-full items-center gap-3 overflow-x-auto sm:order-2 sm:w-auto"
+    >
+      <BaseSegmentedControl v-model="presetModel" :options="periodOptions" label="Période" />
+      <!-- Announced by screen readers when the period changes. -->
+      <p class="font-mono text-xs whitespace-nowrap text-fg-muted" aria-live="polite">
+        {{ rangeLabel }}
+      </p>
     </div>
   </header>
 </template>
