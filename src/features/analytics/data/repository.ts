@@ -4,6 +4,7 @@ import type {
   BreakdownRow,
   Dimension,
   Kpis,
+  MetricComparison,
   MetricKey,
   PageRow,
   TimeseriesPoint,
@@ -19,6 +20,19 @@ export interface AnalyticsQuery {
   filters: Filter[]
 }
 
+/** A site-independent query: the multi-site overview compares every site on the same period. */
+export type PortfolioQuery = Pick<AnalyticsQuery, 'range' | 'comparisonRange' | 'granularity'>
+
+/** One card of the multi-site overview. */
+export interface SiteSummary {
+  siteId: string
+  visitors: MetricComparison
+  visits: MetricComparison
+  bounceRate: MetricComparison
+  /** Unique visitors per chart point over the period (past points only): the sparkline. */
+  trend: number[]
+}
+
 /**
  * The contract between the UI and wherever the statistics come from.
  *
@@ -32,4 +46,6 @@ export interface AnalyticsRepository {
   getTimeseries(query: AnalyticsQuery, metric: MetricKey): Promise<TimeseriesPoint[]>
   getBreakdown(query: AnalyticsQuery, dimension: Dimension): Promise<BreakdownRow[]>
   getPages(query: AnalyticsQuery): Promise<PageRow[]>
+  /** Key figures of several sites at once, for the multi-site overview. */
+  getSiteSummaries(query: PortfolioQuery, siteIds: readonly string[]): Promise<SiteSummary[]>
 }

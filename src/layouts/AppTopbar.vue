@@ -21,7 +21,8 @@ defineEmits<{ openMenu: [] }>()
 const route = useRoute()
 const { period, range, setPreset, setPeriod } = usePeriod()
 
-const isAnalyticsPage = computed(() => typeof route.params.siteId === 'string')
+// Pages driven by the period: a site's analytics, and the multi-site overview.
+const showPeriod = computed(() => typeof route.params.siteId === 'string' || route.name === 'sites')
 
 const periodOptions: { value: PeriodPreset; label: string }[] = [
   { value: 'today', label: 'Aujourd’hui' },
@@ -80,7 +81,7 @@ function applyCustomRange({ from, to }: DayRange) {
 
     <!-- Full-width second row on phones, inline from `sm` up. -->
     <div
-      v-if="isAnalyticsPage"
+      v-if="showPeriod"
       class="order-3 flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 sm:order-2 sm:w-auto"
     >
       <BaseSegmentedControl v-model="presetModel" :options="periodOptions" label="Période" />

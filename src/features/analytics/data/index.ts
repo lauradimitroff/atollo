@@ -7,4 +7,4 @@ import type { AnalyticsRepository } from './repository'
  */
 export const analytics: AnalyticsRepository = createMockRepository()
 
-export type { AnalyticsQuery, AnalyticsRepository } from './repository'
+export type { AnalyticsQuery, AnalyticsRepository, PortfolioQuery, SiteSummary } from './repository'

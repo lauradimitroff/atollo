@@ -62,5 +62,31 @@ export function createMockRepository({
       await delay()
       return pageStats(sessions(query, query.range, now()))
     },
+
+    async getSiteSummaries(query, siteIds) {
+      await delay()
+      const clock = now()
+      const ranges = elapsedRanges(query.range, query.comparisonRange, clock)
+      return siteIds.map((siteId) => {
+        const kpis = compare(
+          summarize(getSessions(siteId, ranges.current, clock)),
+          summarize(getSessions(siteId, ranges.comparison, clock)),
+        )
+        const points = timeseries(
+          { range: query.range, sessions: getSessions(siteId, query.range, clock) },
+          { range: query.comparisonRange, sessions: [] },
+          query.granularity,
+          'visitors',
+          clock,
+        )
+        return {
+          siteId,
+          visitors: kpis.visitors,
+          visits: kpis.visits,
+          bounceRate: kpis.bounceRate,
+          trend: points.flatMap((p) => (p.current === null ? [] : [p.current])),
+        }
+      })
+    },
   }
 }

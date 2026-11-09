@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { Check, ChevronsUpDown, Settings2 } from '@lucide/vue'
+import { Check, ChevronsUpDown, LayoutGrid } from '@lucide/vue'
 
 import BaseDropdownMenu from '@/shared/ui/BaseDropdownMenu.vue'
 import BaseDropdownMenuItem from '@/shared/ui/BaseDropdownMenuItem.vue'
@@ -36,9 +36,9 @@ const router = useRouter()
       <Check v-if="item.id === site.id" class="text-accent!" aria-label="Site actuel" />
     </BaseDropdownMenuItem>
 
-    <BaseDropdownMenuLabel separated>Gestion</BaseDropdownMenuLabel>
+    <BaseDropdownMenuLabel separated>Espace</BaseDropdownMenuLabel>
     <BaseDropdownMenuItem @select="router.push({ name: 'sites' })">
-      <Settings2 aria-hidden="true" />Gérer les sites
+      <LayoutGrid aria-hidden="true" />Tous les sites
     </BaseDropdownMenuItem>
   </BaseDropdownMenu>
 </template>

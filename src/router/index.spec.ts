@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest'
 import router from './index'
 
 describe('router', () => {
-  it('redirects the root to the first site overview', async () => {
+  it('opens the multi-site overview at the root', async () => {
     await router.push('/')
-    expect(router.currentRoute.value.name).toBe('overview')
-    expect(router.currentRoute.value.params.siteId).toBe('atelier-nord')
+    expect(router.currentRoute.value.name).toBe('sites')
+    expect(document.title).toBe('Tous les sites · Atollo')
   })
 
   it('redirects a bare site URL to its overview', async () => {

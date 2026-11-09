@@ -6,12 +6,14 @@ Dashboard d'analytics web multi-sites, pensé pour les freelances et les agences
 
 ## Fonctionnalités
 
-- **Vue d'ensemble** : visiteurs uniques, visites, pages vues, taux de rebond et durée moyenne, avec l'évolution par rapport à la période précédente.
+- **Vue multi-sites** (page d'accueil) : tous les sites sur la même période, avec visiteurs, évolution et mini-graphique de tendance.
+- **Vue d'ensemble** d'un site : visiteurs uniques, visites, pages vues, taux de rebond et durée moyenne, avec l'évolution par rapport à la période précédente.
 - **Graphique d'évolution** superposé à la période de comparaison, pour la métrique choisie.
 - **Répartitions** : sources (canaux, référents, campagnes), pages (populaires, entrées, sorties), pays et villes, appareils, navigateurs et systèmes.
 - **Filtres croisés** : un clic sur une ligne (« Recherche organique », « Mobile »…) filtre tout le tableau de bord.
 - **État dans l'URL** : période, métrique et filtres se partagent par simple lien et suivent le bouton retour.
-- **Plusieurs sites**, thème clair, sombre ou système, interface responsive et navigable au clavier.
+- **Périodes** : aujourd'hui, 7, 30 ou 90 jours, 12 mois (comparés à l'année précédente) ou période personnalisée via un calendrier.
+- Thème clair, sombre ou système, interface responsive et navigable au clavier, états de chargement, vides et d'erreur.
 
 ## Stack technique
 
@@ -21,7 +23,7 @@ Vue 3 (Composition API) · TypeScript strict · Vite · Vue Router · Pinia · T
 
 Les statistiques sont calculées à partir de visites **générées** : un générateur déterministe produit, jour par jour, des visites réalistes (croissance, week-ends, heures de pointe, sources, appareils…). Aucune donnée réelle n'est collectée ni affichée.
 
-Les trois sites de démonstration (Atelier Nord, Studio Brume, La Mie Céleste) sont **des entreprises imaginaires**. Leurs adresses utilisent le domaine réservé `.example` ([RFC 2606](https://www.rfc-editor.org/rfc/rfc2606)), qui ne peut appartenir à personne. Les grandes plateformes citées comme sources de trafic (moteurs de recherche, réseaux sociaux…) le sont uniquement à titre d'exemple.
+Les huit sites de démonstration (Atelier Nord, Studio Brume, La Mie Céleste, Vélo Comète, Les Jardins de Sorbe, Yoga Lumen, Ostrea Avocats, Maison Tilleul) sont **des entreprises imaginaires**, chacune avec son propre profil d'audience. Leurs adresses utilisent le domaine réservé `.example` ([RFC 2606](https://www.rfc-editor.org/rfc/rfc2606)), qui ne peut appartenir à personne. Les grandes plateformes citées comme sources de trafic (moteurs de recherche, réseaux sociaux…) le sont uniquement à titre d'exemple.
 
 ## Démarrer
 

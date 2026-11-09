@@ -1,9 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import AppLayout from '@/layouts/AppLayout.vue'
-import { DEMO_SITES, findSite } from '@/features/sites/demo-sites'
-
-const defaultSiteId = DEMO_SITES[0]!.id
+import { findSite } from '@/features/sites/demo-sites'
 
 /** Analytics pages, all scoped to a site: /s/:siteId/<page>. */
 const analyticsRoutes: RouteRecordRaw[] = [
@@ -64,8 +62,8 @@ const settingsRoutes: RouteRecordRaw[] = [
 ]
 
 const routes: RouteRecordRaw[] = [
-  // Temporary: "/" becomes the landing page in step 6.
-  { path: '/', redirect: { name: 'overview', params: { siteId: defaultSiteId } } },
+  // The multi-site overview is the home of the app (a public landing page may come later).
+  { path: '/', redirect: { name: 'sites' } },
   {
     path: '/',
     component: AppLayout,
@@ -78,7 +76,7 @@ const routes: RouteRecordRaw[] = [
         path: 'sites',
         name: 'sites',
         component: () => import('@/features/sites/views/SitesView.vue'),
-        meta: { title: 'Mes sites' },
+        meta: { title: 'Tous les sites' },
       },
       {
         path: 'settings',

@@ -2,8 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('desktop navigation', { tag: '@desktop' }, () => {
   test('navigates with the sidebar and switches site', async ({ page }) => {
-    await page.goto('/')
-    await expect(page).toHaveURL('/s/atelier-nord/overview')
+    await page.goto('/s/atelier-nord/overview')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vue d’ensemble')
 
     const nav = page.getByRole('navigation', { name: 'Navigation principale' })

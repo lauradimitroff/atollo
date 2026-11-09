@@ -1,28 +1,97 @@
 <script setup lang="ts">
-import { ArrowUpRight } from '@lucide/vue'
+/**
+ * Multi-site overview, the home page: every site of the workspace on the same period,
+ * most visited first. The core of Atollo for freelancers and agencies.
+ */
+import { computed } from 'vue'
 
+import MetricChange from '@/features/analytics/components/MetricChange.vue'
+import { useAnalyticsQuery } from '@/features/analytics/composables/useAnalyticsQuery'
+import { usePeriod } from '@/features/analytics/composables/usePeriod'
+import { analytics, type SiteSummary } from '@/features/analytics/data'
+import { compare } from '@/features/analytics/domain/metrics'
+import { formatNumber } from '@/shared/lib/format'
+import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
+import ErrorState from '@/shared/ui/ErrorState.vue'
+import SiteCard from '../components/SiteCard.vue'
 import { DEMO_SITES } from '../demo-sites'
-import SiteFavicon from '../components/SiteFavicon.vue'
+
+const { query: periodQuery } = usePeriod()
+
+const summaries = useAnalyticsQuery((q) =>
+  analytics.getSiteSummaries(
+    q,
+    DEMO_SITES.map((site) => site.id),
+  ),
+)
+
+const byId = computed(
+  () => new Map<string, SiteSummary>(summaries.data.value?.map((s) => [s.siteId, s]) ?? []),
+)
+
+// Most visited first; while loading, keep the workspace order.
+const sortedSites = computed(() =>
+  [...DEMO_SITES].sort(
+    (a, b) =>
+      (byId.value.get(b.id)?.visitors.current ?? 0) - (byId.value.get(a.id)?.visitors.current ?? 0),
+  ),
+)
+
+/** Visitors of all sites added up (each site counts its own visitors). */
+const total = computed(() => {
+  const list = summaries.data.value
+  if (!list) return null
+  const sum = (pick: (s: SiteSummary) => number) => list.reduce((acc, s) => acc + pick(s), 0)
+  const zero = { visitors: 0, visits: 0, pageviews: 0, bounceRate: 0, avgDuration: 0 }
+  return compare(
+    { ...zero, visitors: sum((s) => s.visitors.current) },
+    { ...zero, visitors: sum((s) => s.visitors.previous) },
+  ).visitors
+})
 </script>
 
 <template>
-  <!-- Stats per site (sparkline, visitors) come with the data layer in step 2. -->
-  <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    <li v-for="site in DEMO_SITES" :key="site.id">
-      <RouterLink
-        :to="{ name: 'overview', params: { siteId: site.id } }"
-        class="group flex items-center gap-3 rounded-xl border border-line bg-surface p-4 shadow-xs transition-colors hover:border-line-strong"
-      >
-        <SiteFavicon :name="site.name" />
-        <span class="min-w-0 flex-1 leading-tight">
-          <span class="block truncate font-medium">{{ site.name }}</span>
-          <span class="block truncate text-xs text-fg-muted">{{ site.domain }}</span>
-        </span>
-        <ArrowUpRight
-          class="size-4 text-fg-subtle transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
-          aria-hidden="true"
+  <div class="flex flex-col gap-5">
+    <section
+      class="flex flex-wrap items-end justify-between gap-4 rounded-xl border border-line bg-surface px-5 py-4 shadow-xs"
+      aria-label="Résumé de l’espace"
+    >
+      <div>
+        <p class="text-label text-[10px]">Sites suivis</p>
+        <p class="mt-2 font-mono text-2xl leading-none font-medium">{{ DEMO_SITES.length }}</p>
+      </div>
+      <div class="text-right">
+        <p class="text-label text-[10px]">Visiteurs, tous sites confondus</p>
+        <p v-if="total" class="mt-2 flex items-baseline justify-end gap-3">
+          <MetricChange metric="visitors" :change="total.change" />
+          <span class="font-mono text-2xl leading-none font-medium tracking-tight">
+            {{ formatNumber(total.current) }}
+          </span>
+        </p>
+        <BaseSkeleton v-else class="mt-2 ml-auto h-6 w-32" />
+      </div>
+    </section>
+
+    <ErrorState
+      v-if="summaries.error.value && !summaries.data.value"
+      class="h-64 rounded-xl border border-line bg-surface"
+      message="Les statistiques des sites n’ont pas pu être chargées."
+      @retry="summaries.reload()"
+    />
+
+    <ul
+      v-else
+      class="grid gap-4 transition-opacity sm:grid-cols-2 xl:grid-cols-3"
+      :class="{ 'opacity-60': summaries.loading.value && summaries.data.value }"
+      :aria-busy="summaries.loading.value"
+    >
+      <li v-for="site in sortedSites" :key="site.id">
+        <SiteCard
+          :site
+          :summary="byId.get(site.id) ?? null"
+          :to="{ name: 'overview', params: { siteId: site.id }, query: periodQuery }"
         />
-      </RouterLink>
-    </li>
-  </ul>
+      </li>
+    </ul>
+  </div>
 </template>

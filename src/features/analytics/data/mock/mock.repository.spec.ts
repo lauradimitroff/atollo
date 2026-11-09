@@ -127,3 +127,26 @@ describe('cross filters', () => {
     expect(kpis.visits.current).toBe(devices.find((row) => row.key === 'mobile')!.visits)
   })
 })
+
+describe('site summaries (multi-site overview)', () => {
+  it('match each site’s own KPIs', async () => {
+    const [summaries, atelier, brume] = await Promise.all([
+      repo.getSiteSummaries(october, ['atelier-nord', 'studio-brume']),
+      repo.getKpis(october),
+      repo.getKpis({ ...october, siteId: 'studio-brume' }),
+    ])
+    expect(summaries.map((s) => s.siteId)).toEqual(['atelier-nord', 'studio-brume'])
+    expect(summaries[0]!.visitors).toEqual(atelier.visitors)
+    expect(summaries[1]!.bounceRate).toEqual(brume.bounceRate)
+  })
+
+  it('gives one trend point per day of the period', async () => {
+    const [summary] = await repo.getSiteSummaries(october, ['mie-celeste'])
+    expect(summary!.trend).toHaveLength(31)
+  })
+
+  it('shows no visit at all for the site without tracking', async () => {
+    const [summary] = await repo.getSiteSummaries(october, ['maison-tilleul'])
+    expect(summary!.visitors).toEqual({ current: 0, previous: 0, change: null })
+  })
+})

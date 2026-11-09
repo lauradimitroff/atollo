@@ -56,7 +56,7 @@ const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
     {
       title: 'Espace',
       items: [
-        { label: 'Mes sites', icon: List, to: { name: 'sites' } },
+        { label: 'Tous les sites', icon: List, to: { name: 'sites', query: periodQuery.value } },
         {
           label: 'Paramètres',
           icon: Settings,
