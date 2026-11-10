@@ -85,8 +85,13 @@ const authRoutes: RouteRecordRaw[] = [
 ]
 
 const routes: RouteRecordRaw[] = [
-  // The multi-site overview is the home of the app (a public landing page may come later).
-  { path: '/', redirect: { name: 'sites' } },
+  // Public home page, for everyone: signed-in users find a link to their dashboard there.
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('@/features/landing/LandingView.vue'),
+    meta: { documentTitle: 'Atollo · Statistiques web multi-sites, simples et lisibles' },
+  },
   {
     path: '/',
     component: () => import('@/layouts/AuthLayout.vue'),
@@ -137,7 +142,9 @@ if (import.meta.env.DEV) {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior: (_to, _from, saved) => saved ?? { top: 0 },
+  // Back/forward: where the user was. Anchor (#fonctionnalites): that section. Else: top.
+  scrollBehavior: (to, _from, saved) =>
+    saved ?? (to.hash ? { el: to.hash, behavior: 'smooth' } : { top: 0 }),
 })
 
 // Access: the app needs a session, the sign-in pages need none.
@@ -167,7 +174,7 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
-  document.title = to.meta.title ? `${to.meta.title} · Atollo` : 'Atollo'
+  document.title = to.meta.documentTitle ?? (to.meta.title ? `${to.meta.title} · Atollo` : 'Atollo')
 })
 
 export default router

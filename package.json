@@ -17,7 +17,8 @@
     "format": "prettier --write --experimental-cli .",
     "test": "vitest run",
     "format:check": "prettier --check --experimental-cli .",
-    "build:map": "node scripts/build-world-map.mjs"
+    "build:map": "node scripts/build-world-map.mjs",
+    "capture": "node scripts/capture-screenshots.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

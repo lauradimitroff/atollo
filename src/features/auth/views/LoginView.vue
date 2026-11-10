@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight, Sparkles } from '@lucide/vue'
 
@@ -9,6 +8,7 @@ import BaseField from '@/shared/ui/BaseField.vue'
 import BaseInput from '@/shared/ui/BaseInput.vue'
 import BasePasswordInput from '@/shared/ui/BasePasswordInput.vue'
 import { useAuthStore } from '../auth.store'
+import { useDemoSignIn } from '../composables/useDemoSignIn'
 import AuthCard from '../components/AuthCard.vue'
 import FormAlert from '../components/FormAlert.vue'
 import { authErrorMessage } from '../messages'
@@ -33,21 +33,14 @@ const onSubmit = handleSubmit(async (data) => {
   await goToApp()
 })
 
-const demoLoading = ref(false)
-const demoError = ref<string | null>(null)
-
-async function openDemo() {
-  demoLoading.value = true
-  demoError.value = null
-  try {
-    await auth.signInAsDemo()
-    await goToApp()
-  } catch (error) {
-    demoError.value = authErrorMessage(error)
-  } finally {
-    demoLoading.value = false
-  }
-}
+const {
+  openDemo,
+  loading: demoLoading,
+  error: demoError,
+} = useDemoSignIn({
+  destination: () => safeRedirect(route.query.redirect) ?? { name: 'sites' },
+  replace: true,
+})
 </script>
 
 <template>

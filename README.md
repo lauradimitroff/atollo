@@ -41,16 +41,17 @@ L'application est disponible sur http://localhost:5173.
 
 L'authentification passe par un contrat (`AuthService`). L'implémentation actuelle est **simulée dans le navigateur** : les comptes créés et la session sont enregistrés dans le `localStorage` (mots de passe salés et hachés, jamais en clair), aucun serveur n'est contacté et aucun e-mail n'est envoyé. Un vrai fournisseur (Supabase, Firebase, Appwrite…) pourra la remplacer en changeant une ligne dans `src/features/auth/data/index.ts`.
 
-| Commande             | Rôle                                            |
-| -------------------- | ----------------------------------------------- |
-| `npm run dev`        | Serveur de développement                        |
-| `npm run build`      | Vérification des types + build de production    |
-| `npm run preview`    | Sert le build de production localement          |
-| `npm run type-check` | Vérification TypeScript (vue-tsc)               |
-| `npm run lint`       | Oxlint puis ESLint, avec correction automatique |
-| `npm run format`     | Formatage Prettier                              |
-| `npm test`           | Tests unitaires (Vitest)                        |
-| `npm run test:e2e`   | Tests de bout en bout (Playwright, port 5191)   |
+| Commande             | Rôle                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| `npm run dev`        | Serveur de développement                                     |
+| `npm run build`      | Vérification des types + build de production                 |
+| `npm run preview`    | Sert le build de production localement                       |
+| `npm run type-check` | Vérification TypeScript (vue-tsc)                            |
+| `npm run lint`       | Oxlint puis ESLint, avec correction automatique              |
+| `npm run format`     | Formatage Prettier                                           |
+| `npm test`           | Tests unitaires (Vitest)                                     |
+| `npm run test:e2e`   | Tests de bout en bout (Playwright, port 5191)                |
+| `npm run capture`    | Captures d'écran de la page d'accueil (serveur de dev lancé) |
 
 ## Organisation du code
 

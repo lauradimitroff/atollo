@@ -3,9 +3,19 @@ import { describe, expect, it } from 'vitest'
 import router from './index'
 
 describe('router', () => {
-  it('opens the multi-site overview at the root', async () => {
+  it('opens the public home page at the root, signed in or not', async () => {
     await router.push('/')
-    expect(router.currentRoute.value.name).toBe('sites')
+    expect(router.currentRoute.value.name).toBe('home')
+    expect(document.title).toBe('Atollo · Statistiques web multi-sites, simples et lisibles')
+
+    localStorage.removeItem('atollo-session')
+    await router.push('/sites')
+    await router.push('/')
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+
+  it('names the multi-site overview in the tab title', async () => {
+    await router.push('/sites')
     expect(document.title).toBe('Tous les sites · Atollo')
   })
 

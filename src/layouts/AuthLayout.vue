@@ -14,7 +14,7 @@ import ThemeMenu from './ThemeMenu.vue'
     />
 
     <header class="flex items-center justify-between px-5 py-4 sm:px-8">
-      <RouterLink to="/login" class="rounded-md" aria-label="Atollo, connexion">
+      <RouterLink to="/" class="rounded-md" aria-label="Atollo, accueil">
         <AppLogo />
       </RouterLink>
       <ThemeMenu />
