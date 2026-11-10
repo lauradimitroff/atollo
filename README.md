@@ -2,6 +2,8 @@
 
 Dashboard d'analytics web multi-sites, pensé pour les freelances et les agences qui suivent plusieurs sites clients. Interface sobre, statistiques lisibles, respect de la vie privée.
 
+**[Voir la démo en ligne → atollo.vercel.app](https://atollo.vercel.app/)** (bouton « Explorer la démo », sans inscription)
+
 > Projet personnel de portfolio, construit étape par étape. Toutes les données affichées sont **fictives** (voir [Données de démonstration](#données-de-démonstration)).
 
 ## Fonctionnalités

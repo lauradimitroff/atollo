@@ -51,4 +51,25 @@ for (const theme of ['light', 'dark']) {
   await context.close()
 }
 
+// Link preview image (LinkedIn, Slack…): the top of the home page, signed out,
+// at the 1200 × 630 size social networks expect.
+{
+  const context = await browser.newContext({
+    viewport: { width: 1200, height: 630 },
+    colorScheme: 'light',
+    reducedMotion: 'reduce',
+  })
+  await context.addInitScript(() => localStorage.setItem('atollo-theme', 'light'))
+  const page = await context.newPage()
+  await page.goto(BASE_URL + '/')
+  await page.waitForLoadState('networkidle')
+  await page.addStyleTag({
+    content: '#__vue-devtools-container__, #vue-inspector-container { display: none !important }',
+  })
+  const file = new URL('../public/og-image.jpg', import.meta.url)
+  await page.screenshot({ path: file.pathname, type: 'jpeg', quality: 85 })
+  console.log('✓ og-image.jpg')
+  await context.close()
+}
+
 await browser.close()
