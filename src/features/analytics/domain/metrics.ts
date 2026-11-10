@@ -267,6 +267,34 @@ export function breakdown(sessions: readonly Session[], dimension: Dimension): B
     .sort((a, b) => b.visits - a.visits || a.key.localeCompare(b.key))
 }
 
+export interface SegmentRow extends Summary {
+  key: string
+  /** Share of the visits, as in a breakdown. */
+  share: number
+}
+
+/**
+ * Full summary (visitors, bounce rate, duration…) of each value of a dimension:
+ * how visitors behave on mobile compared with desktop, for example.
+ * Same grouping and order as `breakdown`, so both always agree.
+ */
+export function segments(sessions: readonly Session[], dimension: Dimension): SegmentRow[] {
+  const groups = new Map<string, Session[]>()
+  let total = 0
+  for (const session of sessions) {
+    const key = sessionValue(session, dimension)
+    if (key === null) continue
+    total++
+    let group = groups.get(key)
+    if (!group) groups.set(key, (group = []))
+    group.push(session)
+  }
+
+  return [...groups]
+    .map(([key, group]) => ({ key, ...summarize(group), share: group.length / total }))
+    .sort((a, b) => b.visits - a.visits || a.key.localeCompare(b.key))
+}
+
 // ---------------------------------------------------------------------------
 // Pages
 // ---------------------------------------------------------------------------

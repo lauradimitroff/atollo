@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDateRange, formatDuration, formatNumber } from './format'
+import { formatDateRange, formatDecimal, formatDuration, formatNumber } from './format'
 
 const NOW = new Date(2026, 10, 9, 14, 35)
 
@@ -23,6 +23,13 @@ describe('formatDateRange', () => {
   it('shows hours for a range not aligned on midnight', () => {
     const range = { start: new Date(2026, 10, 8, 15), end: new Date(2026, 10, 9, 15) }
     expect(formatDateRange(range, NOW)).toBe('8 nov., 15:00 – 9 nov., 15:00')
+  })
+})
+
+describe('formatDecimal', () => {
+  it('always shows one decimal, with a French comma', () => {
+    expect(formatDecimal(2.43)).toBe('2,4')
+    expect(formatDecimal(3)).toBe('3,0')
   })
 })
 

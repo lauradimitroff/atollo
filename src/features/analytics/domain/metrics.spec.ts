@@ -7,6 +7,7 @@ import {
   changeSentiment,
   compare,
   pageStats,
+  segments,
   summarize,
   timeseries,
 } from './metrics'
@@ -146,6 +147,19 @@ describe('breakdown', () => {
       ['/', 2],
       ['/contact', 2],
     ])
+  })
+})
+
+describe('segments', () => {
+  it('summarizes each value with the same grouping and order as breakdown', () => {
+    const rows = segments(sessions, 'channel')
+    expect(rows.map((r) => [r.key, r.visits, r.share])).toEqual(
+      breakdown(sessions, 'channel').map((r) => [r.key, r.visits, r.share]),
+    )
+    for (const row of rows) {
+      const group = sessions.filter((s) => s.channel === row.key)
+      expect(row).toMatchObject(summarize(group))
+    }
   })
 })
 

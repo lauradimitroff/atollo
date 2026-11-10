@@ -53,6 +53,16 @@ export function formatNumber(value: number): string {
   return integer.format(value)
 }
 
+const decimal = new Intl.NumberFormat('fr-FR', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+})
+
+/** "2,4": one decimal, for averages such as pages per visit. */
+export function formatDecimal(value: number): string {
+  return decimal.format(value)
+}
+
 /** "2 min 05 s", "45 s", "1 h 03 min". */
 export function formatDuration(totalSeconds: number): string {
   const seconds = Math.round(totalSeconds)

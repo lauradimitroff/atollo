@@ -8,6 +8,7 @@ import type {
   MetricComparison,
   MetricKey,
   PageRow,
+  SegmentRow,
   TimeseriesPoint,
 } from '../domain/metrics'
 
@@ -47,6 +48,8 @@ export interface AnalyticsRepository {
   getTimeseries(query: AnalyticsQuery, metric: MetricKey): Promise<TimeseriesPoint[]>
   getBreakdown(query: AnalyticsQuery, dimension: Dimension): Promise<BreakdownRow[]>
   getPages(query: AnalyticsQuery): Promise<PageRow[]>
+  /** Every key figure for each value of a dimension (behavior per device…). */
+  getSegments(query: AnalyticsQuery, dimension: Dimension): Promise<SegmentRow[]>
   /** Visits per acquisition channel over time (current period only). */
   getChannelTimeseries(query: AnalyticsQuery): Promise<ChannelPoint[]>
   /** Key figures of several sites at once, for the multi-site overview. */

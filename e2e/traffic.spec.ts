@@ -31,6 +31,7 @@ const READY: Record<string, string> = {
   traffic: 'x-vue-echarts svg',
   pages: 'table th[scope="row"]',
   locations: 'x-vue-echarts svg',
+  devices: 'table th[scope="row"]',
 }
 
 for (const [name, ready] of Object.entries(READY)) {

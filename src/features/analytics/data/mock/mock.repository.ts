@@ -3,6 +3,7 @@ import {
   channelTimeseries,
   compare,
   pageStats,
+  segments,
   summarize,
   timeseries,
 } from '../../domain/metrics'
@@ -63,6 +64,11 @@ export function createMockRepository({
     async getBreakdown(query, dimension) {
       await delay()
       return breakdown(sessions(query, query.range, now()), dimension)
+    },
+
+    async getSegments(query, dimension) {
+      await delay()
+      return segments(sessions(query, query.range, now()), dimension)
     },
 
     async getPages(query) {
