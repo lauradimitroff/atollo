@@ -6,6 +6,7 @@ Dashboard d'analytics web multi-sites, pensé pour les freelances et les agences
 
 ## Fonctionnalités
 
+- **Comptes** : inscription, connexion, mot de passe oublié, déconnexion, pages protégées, et un bouton « Explorer la démo » pour tout voir sans s'inscrire.
 - **Vue multi-sites** (page d'accueil) : tous les sites sur la même période, avec visiteurs, évolution et mini-graphique de tendance.
 - **Vue d'ensemble** d'un site : visiteurs uniques, visites, pages vues, taux de rebond et durée moyenne, avec l'évolution par rapport à la période précédente.
 - **Graphique d'évolution** superposé à la période de comparaison, pour la métrique choisie.
@@ -17,7 +18,7 @@ Dashboard d'analytics web multi-sites, pensé pour les freelances et les agences
 
 ## Stack technique
 
-Vue 3 (Composition API) · TypeScript strict · Vite · Vue Router · Pinia · Tailwind CSS v4 · Reka UI · Apache ECharts · VueUse · date-fns · Vitest · Playwright
+Vue 3 (Composition API) · TypeScript strict · Vite · Vue Router · Pinia · Tailwind CSS v4 · Reka UI · Apache ECharts · VueUse · date-fns · Zod · Vitest · Playwright
 
 ## Données de démonstration
 
@@ -35,6 +36,10 @@ npm run dev
 ```
 
 L'application est disponible sur http://localhost:5173.
+
+### Authentification simulée
+
+L'authentification passe par un contrat (`AuthService`). L'implémentation actuelle est **simulée dans le navigateur** : les comptes créés et la session sont enregistrés dans le `localStorage` (mots de passe salés et hachés, jamais en clair), aucun serveur n'est contacté et aucun e-mail n'est envoyé. Un vrai fournisseur (Supabase, Firebase, Appwrite…) pourra la remplacer en changeant une ligne dans `src/features/auth/data/index.ts`.
 
 | Commande             | Rôle                                            |
 | -------------------- | ----------------------------------------------- |
@@ -76,6 +81,7 @@ Atollo s'appuie sur ces projets open source :
 | [Apache ECharts](https://echarts.apache.org)                                                                                                   | Graphiques                                              | Apache 2.0                         |
 | [vue-echarts](https://github.com/ecomfe/vue-echarts)                                                                                           | Intégration d'ECharts dans Vue                          | MIT                                |
 | [Lucide](https://lucide.dev)                                                                                                                   | Icônes                                                  | ISC                                |
+| [Zod](https://zod.dev)                                                                                                                         | Validation des formulaires                              | MIT                                |
 | [date-fns](https://date-fns.org)                                                                                                               | Calculs de dates                                        | MIT                                |
 | [Natural Earth](https://www.naturalearthdata.com) (via [world-atlas](https://github.com/topojson/world-atlas))                                 | Contours des pays de la carte                           | Domaine public (world-atlas : ISC) |
 | [topojson-client](https://github.com/topojson/topojson-client), [i18n-iso-countries](https://github.com/michaelwittig/node-i18n-iso-countries) | Génération du fichier de la carte (`npm run build:map`) | ISC, MIT                           |

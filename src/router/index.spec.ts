@@ -19,6 +19,18 @@ describe('router', () => {
     expect(router.currentRoute.value.name).toBe('not-found')
   })
 
+  it('sends a signed-out visitor to sign in, remembering the page asked for', async () => {
+    localStorage.removeItem('atollo-session')
+    await router.push('/s/studio-brume/pages?period=7d')
+    expect(router.currentRoute.value.name).toBe('login')
+    expect(router.currentRoute.value.query.redirect).toBe('/s/studio-brume/pages?period=7d')
+  })
+
+  it('sends a signed-in user away from the sign-in page', async () => {
+    await router.push('/login')
+    expect(router.currentRoute.value.name).toBe('sites')
+  })
+
   it('opens the profile tab by default in settings', async () => {
     await router.push('/settings')
     expect(router.currentRoute.value.name).toBe('settings-profile')

@@ -15,6 +15,7 @@ import { useFilters } from '@/features/analytics/composables/useFilters'
 import { usePeriod } from '@/features/analytics/composables/usePeriod'
 import SiteSwitcher from '@/features/sites/components/SiteSwitcher.vue'
 import { useCurrentSite } from '@/features/sites/composables/useCurrentSite'
+import AccountMenu from './AccountMenu.vue'
 import AppLogo from './AppLogo.vue'
 
 interface NavItem {
@@ -104,20 +105,8 @@ const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
       </div>
     </nav>
 
-    <RouterLink
-      :to="{ name: 'settings-profile' }"
-      class="mt-auto flex items-center gap-2.5 rounded-lg border-t border-line px-2 pt-4 transition-colors hover:text-fg"
-    >
-      <span
-        class="grid size-7 place-items-center rounded-full border border-line bg-surface-muted text-[11px] font-semibold text-fg-muted"
-        aria-hidden="true"
-      >
-        D
-      </span>
-      <span class="min-w-0 leading-tight">
-        <span class="block truncate text-[13px] font-medium">Compte démo</span>
-        <span class="block text-xs text-fg-muted">Données fictives</span>
-      </span>
-    </RouterLink>
+    <div class="mt-auto border-t border-line pt-3">
+      <AccountMenu />
+    </div>
   </div>
 </template>

@@ -2,6 +2,7 @@ import process from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
 
 const isCI = !!process.env.CI
+const baseURL = isCI ? 'http://localhost:4173' : 'http://localhost:5191'
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -16,8 +17,15 @@ export default defineConfig({
   workers: isCI ? 1 : undefined,
   reporter: isCI ? 'github' : 'html',
   use: {
-    baseURL: isCI ? 'http://localhost:4173' : 'http://localhost:5191',
+    baseURL,
     trace: 'on-first-retry',
+    // Every test starts signed in to the demo account (e2e/auth.spec.ts starts signed out).
+    storageState: {
+      cookies: [],
+      origins: [
+        { origin: baseURL, localStorage: [{ name: 'atollo-session', value: '{"userId":"demo"}' }] },
+      ],
+    },
   },
   // Chromium desktop + a mobile viewport: enough coverage for the responsive layout.
   // Tests tagged @desktop / @mobile only run in the matching project.

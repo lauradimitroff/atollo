@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import AppLayout from '@/layouts/AppLayout.vue'
+import { useAuthStore } from '@/features/auth/auth.store'
 import { findSite } from '@/features/sites/demo-sites'
 
 /** Analytics pages, all scoped to a site: /s/:siteId/<page>. */
@@ -61,12 +62,41 @@ const settingsRoutes: RouteRecordRaw[] = [
   },
 ]
 
+/** Signed-out pages, in their own light layout. */
+const authRoutes: RouteRecordRaw[] = [
+  {
+    path: 'login',
+    name: 'login',
+    component: () => import('@/features/auth/views/LoginView.vue'),
+    meta: { title: 'Connexion' },
+  },
+  {
+    path: 'register',
+    name: 'register',
+    component: () => import('@/features/auth/views/RegisterView.vue'),
+    meta: { title: 'Créer un compte' },
+  },
+  {
+    path: 'forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/features/auth/views/ForgotPasswordView.vue'),
+    meta: { title: 'Mot de passe oublié' },
+  },
+]
+
 const routes: RouteRecordRaw[] = [
   // The multi-site overview is the home of the app (a public landing page may come later).
   { path: '/', redirect: { name: 'sites' } },
   {
     path: '/',
+    component: () => import('@/layouts/AuthLayout.vue'),
+    meta: { guestOnly: true },
+    children: authRoutes,
+  },
+  {
+    path: '/',
     component: AppLayout,
+    meta: { requiresAuth: true },
     children: [
       {
         path: 's/:siteId',
@@ -108,6 +138,20 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior: (_to, _from, saved) => saved ?? { top: 0 },
+})
+
+// Access: the app needs a session, the sign-in pages need none.
+// `to.meta` merges the meta of every matched route, so children inherit the flags.
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
+  await auth.init()
+
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    // Remember the page asked for (a shared link…) to open it right after signing in.
+    const redirect = to.fullPath === '/sites' ? undefined : to.fullPath
+    return { name: 'login', query: redirect ? { redirect } : {} }
+  }
+  if (to.meta.guestOnly && auth.isAuthenticated) return { name: 'sites' }
 })
 
 // Unknown site id → 404 instead of an empty dashboard.
