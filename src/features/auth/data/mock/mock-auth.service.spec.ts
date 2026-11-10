@@ -82,4 +82,50 @@ describe('mock auth service', () => {
   it('answers a reset request the same way for any e-mail', async () => {
     await expect(auth.requestPasswordReset('nobody@studio.example')).resolves.toBeUndefined()
   })
+
+  describe('account settings', () => {
+    beforeEach(() => auth.signUp(LAURE))
+
+    it('renames the account', async () => {
+      expect(await auth.updateProfile({ name: '  Laure Martin ' })).toMatchObject({
+        name: 'Laure Martin',
+      })
+      expect((await auth.getCurrentUser())?.name).toBe('Laure Martin')
+    })
+
+    it('asks for the current password before changing the e-mail', async () => {
+      await expect(
+        auth.updateEmail({ email: 'new@studio.example', currentPassword: 'nope' }),
+      ).rejects.toEqual(new AuthError('wrong-password'))
+
+      const user = await auth.updateEmail({
+        email: 'New@Studio.example',
+        currentPassword: LAURE.password,
+      })
+      expect(user.email).toBe('new@studio.example')
+    })
+
+    it('changes the password: the old one stops working', async () => {
+      await auth.updatePassword({ currentPassword: LAURE.password, newPassword: 'a new phrase' })
+      await auth.signOut()
+      await expect(auth.signIn(LAURE)).rejects.toEqual(new AuthError('invalid-credentials'))
+      await expect(auth.signIn({ ...LAURE, password: 'a new phrase' })).resolves.toBeTruthy()
+    })
+
+    it('deletes the account and ends the session', async () => {
+      await auth.deleteAccount({ currentPassword: LAURE.password })
+      expect(await auth.getCurrentUser()).toBeNull()
+      await expect(auth.signIn(LAURE)).rejects.toEqual(new AuthError('invalid-credentials'))
+    })
+
+    it('keeps the demo account read-only', async () => {
+      await auth.signInAsDemo()
+      await expect(auth.updateProfile({ name: 'Hacked' })).rejects.toEqual(
+        new AuthError('demo-readonly'),
+      )
+      await expect(auth.deleteAccount({ currentPassword: '' })).rejects.toEqual(
+        new AuthError('demo-readonly'),
+      )
+    })
+  })
 })

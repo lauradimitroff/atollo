@@ -37,6 +37,9 @@ export interface MockAuthOptions {
   latency?: number
 }
 
+const replaceAt = <T>(list: T[], index: number, item: T) =>
+  list.map((current, i) => (i === index ? item : current))
+
 const normalizeEmail = (email: string) => email.trim().toLowerCase()
 
 const toHex = (bytes: ArrayBuffer | Uint8Array) =>
@@ -76,6 +79,22 @@ export function createMockAuthService({
   const startSession = (user: User) => {
     write(SESSION_KEY, { userId: user.id } satisfies StoredSession)
     return user
+  }
+
+  /** The signed-in account, for the settings. The demo account is read-only. */
+  function sessionAccount() {
+    const session = read<StoredSession | null>(SESSION_KEY, null)
+    if (session?.userId === DEMO_USER.id) throw new AuthError('demo-readonly')
+    const all = accounts()
+    const index = all.findIndex((a) => a.id === session?.userId)
+    if (index === -1) throw new AuthError('session-expired')
+    return { all, index, account: all[index]! }
+  }
+
+  async function checkPassword(account: StoredAccount, password: string) {
+    if ((await hashPassword(password, account.salt)) !== account.passwordHash) {
+      throw new AuthError('wrong-password')
+    }
   }
 
   return {
@@ -131,6 +150,46 @@ export function createMockAuthService({
     async requestPasswordReset() {
       // Nothing is sent in the demo; a real provider would e-mail a single-use link.
       await delay()
+    },
+
+    async updateProfile({ name }) {
+      await delay()
+      const { all, index, account } = sessionAccount()
+      const updated = { ...account, name: name.trim() }
+      write(ACCOUNTS_KEY, replaceAt(all, index, updated))
+      return toUser(updated)
+    },
+
+    async updateEmail({ email, currentPassword }) {
+      await delay()
+      const { all, index, account } = sessionAccount()
+      await checkPassword(account, currentPassword)
+      const normalized = normalizeEmail(email)
+      const taken = all.some((a, i) => i !== index && a.email === normalized)
+      if (taken || normalized === DEMO_USER.email) throw new AuthError('email-taken')
+      const updated = { ...account, email: normalized }
+      write(ACCOUNTS_KEY, replaceAt(all, index, updated))
+      return toUser(updated)
+    },
+
+    async updatePassword({ currentPassword, newPassword }) {
+      await delay()
+      const { all, index, account } = sessionAccount()
+      await checkPassword(account, currentPassword)
+      const salt = toHex(crypto.getRandomValues(new Uint8Array(16)))
+      const passwordHash = await hashPassword(newPassword, salt)
+      write(ACCOUNTS_KEY, replaceAt(all, index, { ...account, salt, passwordHash }))
+    },
+
+    async deleteAccount({ currentPassword }) {
+      await delay()
+      const { all, index, account } = sessionAccount()
+      await checkPassword(account, currentPassword)
+      write(
+        ACCOUNTS_KEY,
+        all.filter((_, i) => i !== index),
+      )
+      write(SESSION_KEY, null)
     },
   }
 }

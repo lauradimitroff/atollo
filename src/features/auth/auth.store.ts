@@ -42,6 +42,19 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
+  async function updateProfile(input: { name: string }) {
+    user.value = await authService.updateProfile(input)
+  }
+
+  async function updateEmail(input: { email: string; currentPassword: string }) {
+    user.value = await authService.updateEmail(input)
+  }
+
+  async function deleteAccount(input: { currentPassword: string }) {
+    await authService.deleteAccount(input)
+    user.value = null
+  }
+
   return {
     user,
     isAuthenticated: computed(() => user.value !== null),
@@ -51,5 +64,10 @@ export const useAuthStore = defineStore('auth', () => {
     signInAsDemo,
     signOut,
     requestPasswordReset: (email: string) => authService.requestPasswordReset(email),
+    updateProfile,
+    updateEmail,
+    updatePassword: (input: { currentPassword: string; newPassword: string }) =>
+      authService.updatePassword(input),
+    deleteAccount,
   }
 })

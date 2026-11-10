@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { LoaderCircle } from '@lucide/vue'
 
-type Variant = 'primary' | 'secondary' | 'ghost'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 type Size = 'sm' | 'md'
 
 const props = withDefaults(
@@ -22,6 +22,8 @@ const variants: Record<Variant, string> = {
   primary: 'bg-fg text-canvas hover:bg-fg/90',
   secondary: 'border border-line bg-surface text-fg shadow-xs hover:bg-surface-muted',
   ghost: 'text-fg-muted hover:bg-surface-muted hover:text-fg',
+  // Dark text in dark mode: white on the light red of the dark theme lacks contrast.
+  danger: 'bg-down text-white hover:bg-down/90 dark:text-canvas',
 }
 
 const sizes: Record<Size, { base: string; icon: string }> = {

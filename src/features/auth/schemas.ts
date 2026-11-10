@@ -22,17 +22,32 @@ export const signInSchema = z.object({
  */
 export const PASSWORD_MIN_LENGTH = 8
 
-export const signUpSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, { error: 'Saisissez votre nom (2 caractères minimum).' })
-    .max(60, { error: '60 caractères maximum.' }),
-  email,
-  password: z
-    .string()
-    .min(PASSWORD_MIN_LENGTH, { error: `${PASSWORD_MIN_LENGTH} caractères minimum.` })
-    .max(128, { error: '128 caractères maximum.' }),
-})
+const name = z
+  .string()
+  .trim()
+  .min(2, { error: 'Saisissez votre nom (2 caractères minimum).' })
+  .max(60, { error: '60 caractères maximum.' })
+
+const newPassword = z
+  .string()
+  .min(PASSWORD_MIN_LENGTH, { error: `${PASSWORD_MIN_LENGTH} caractères minimum.` })
+  .max(128, { error: '128 caractères maximum.' })
+
+const currentPassword = z.string().min(1, { error: 'Saisissez votre mot de passe actuel.' })
+
+export const signUpSchema = z.object({ name, email, password: newPassword })
+
+export const profileSchema = z.object({ name })
+
+export const emailChangeSchema = z.object({ email, currentPassword })
+
+export const passwordChangeSchema = z
+  .object({ currentPassword, newPassword })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    error: 'Choisissez un mot de passe différent de l’actuel.',
+    path: ['newPassword'],
+  })
+
+export const accountDeletionSchema = z.object({ currentPassword })
 
 export const passwordResetSchema = z.object({ email })

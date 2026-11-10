@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { ChevronsUpDown, LogOut, Settings, UserRound } from '@lucide/vue'
 
 import { useAuthStore } from '@/features/auth/auth.store'
+import { initials } from '@/features/auth/initials'
 import BaseDropdownMenu from '@/shared/ui/BaseDropdownMenu.vue'
 import BaseDropdownMenuItem from '@/shared/ui/BaseDropdownMenuItem.vue'
 import BaseDropdownMenuLabel from '@/shared/ui/BaseDropdownMenuLabel.vue'
@@ -14,15 +15,7 @@ const router = useRouter()
 
 const user = computed(() => auth.user)
 
-/** "Laure Martin" → "LM"; one word → its first letter. */
-const initials = computed(() =>
-  (user.value?.name ?? '')
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0]!.toUpperCase())
-    .join(''),
-)
+const initialsOfUser = computed(() => initials(user.value?.name ?? ''))
 
 async function signOut() {
   await auth.signOut()
@@ -42,7 +35,7 @@ async function signOut() {
           class="grid size-7 shrink-0 place-items-center rounded-full border border-line bg-surface-muted text-[11px] font-semibold text-fg-muted"
           aria-hidden="true"
         >
-          {{ user.isDemo ? 'D' : initials }}
+          {{ user.isDemo ? 'D' : initialsOfUser }}
         </span>
         <span class="min-w-0 flex-1 leading-tight">
           <span class="block truncate text-[13px] font-medium">{{ user.name }}</span>

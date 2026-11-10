@@ -96,6 +96,10 @@ async function openDemo() {
       </div>
     </template>
 
+    <FormAlert v-if="route.query.deleted" tone="success" class="mb-4">
+      Votre compte a bien été supprimé.
+    </FormAlert>
+
     <!-- novalidate: our own messages, consistent across browsers and read by screen readers. -->
     <form class="flex flex-col gap-4" novalidate aria-label="Connexion" @submit.prevent="onSubmit">
       <FormAlert v-if="formError">{{ formError }}</FormAlert>

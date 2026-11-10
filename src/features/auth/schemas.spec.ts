@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { signInSchema, signUpSchema } from './schemas'
+import { passwordChangeSchema, signInSchema, signUpSchema } from './schemas'
 
 const firstError = (result: { success: boolean; error?: { issues: { message: string }[] } }) =>
   result.error?.issues[0]?.message
@@ -32,5 +32,18 @@ describe('signUpSchema', () => {
     expect(firstError(signUpSchema.safeParse({ ...valid, password: 'short' }))).toBe(
       '8 caractères minimum.',
     )
+  })
+})
+
+describe('passwordChangeSchema', () => {
+  it('refuses a new password identical to the current one, on the new password field', () => {
+    const result = passwordChangeSchema.safeParse({
+      currentPassword: 'correct horse',
+      newPassword: 'correct horse',
+    })
+    expect(result.error?.issues[0]).toMatchObject({
+      path: ['newPassword'],
+      message: 'Choisissez un mot de passe différent de l’actuel.',
+    })
   })
 })
