@@ -67,20 +67,22 @@ src/
 
 Atollo s'appuie sur ces projets open source :
 
-| Projet                                                                                                | Usage                                              | Licence                   |
-| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
-| [Vue.js](https://vuejs.org), [Vue Router](https://router.vuejs.org), [Pinia](https://pinia.vuejs.org) | Framework, routage, état                           | MIT                       |
-| [VueUse](https://vueuse.org)                                                                          | Utilitaires Vue                                    | MIT                       |
-| [Reka UI](https://reka-ui.com)                                                                        | Composants accessibles (menus, onglets, dialogues) | MIT                       |
-| [Tailwind CSS](https://tailwindcss.com)                                                               | Styles                                             | MIT                       |
-| [Apache ECharts](https://echarts.apache.org)                                                          | Graphiques                                         | Apache 2.0                |
-| [vue-echarts](https://github.com/ecomfe/vue-echarts)                                                  | Intégration d'ECharts dans Vue                     | MIT                       |
-| [Lucide](https://lucide.dev)                                                                          | Icônes                                             | ISC                       |
-| [date-fns](https://date-fns.org)                                                                      | Calculs de dates                                   | MIT                       |
-| [Geist et Geist Mono](https://vercel.com/font) (via [Fontsource](https://fontsource.org))             | Polices                                            | SIL Open Font License 1.1 |
-| [Vite](https://vite.dev), [Vitest](https://vitest.dev)                                                | Outillage, tests unitaires                         | MIT                       |
-| [Playwright](https://playwright.dev)                                                                  | Tests de bout en bout                              | Apache 2.0                |
-| [TypeScript](https://www.typescriptlang.org)                                                          | Typage                                             | Apache 2.0                |
+| Projet                                                                                                                                         | Usage                                                   | Licence                            |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------- |
+| [Vue.js](https://vuejs.org), [Vue Router](https://router.vuejs.org), [Pinia](https://pinia.vuejs.org)                                          | Framework, routage, état                                | MIT                                |
+| [VueUse](https://vueuse.org)                                                                                                                   | Utilitaires Vue                                         | MIT                                |
+| [Reka UI](https://reka-ui.com)                                                                                                                 | Composants accessibles (menus, onglets, dialogues)      | MIT                                |
+| [Tailwind CSS](https://tailwindcss.com)                                                                                                        | Styles                                                  | MIT                                |
+| [Apache ECharts](https://echarts.apache.org)                                                                                                   | Graphiques                                              | Apache 2.0                         |
+| [vue-echarts](https://github.com/ecomfe/vue-echarts)                                                                                           | Intégration d'ECharts dans Vue                          | MIT                                |
+| [Lucide](https://lucide.dev)                                                                                                                   | Icônes                                                  | ISC                                |
+| [date-fns](https://date-fns.org)                                                                                                               | Calculs de dates                                        | MIT                                |
+| [Natural Earth](https://www.naturalearthdata.com) (via [world-atlas](https://github.com/topojson/world-atlas))                                 | Contours des pays de la carte                           | Domaine public (world-atlas : ISC) |
+| [topojson-client](https://github.com/topojson/topojson-client), [i18n-iso-countries](https://github.com/michaelwittig/node-i18n-iso-countries) | Génération du fichier de la carte (`npm run build:map`) | ISC, MIT                           |
+| [Geist et Geist Mono](https://vercel.com/font) (via [Fontsource](https://fontsource.org))                                                      | Polices                                                 | SIL Open Font License 1.1          |
+| [Vite](https://vite.dev), [Vitest](https://vitest.dev)                                                                                         | Outillage, tests unitaires                              | MIT                                |
+| [Playwright](https://playwright.dev)                                                                                                           | Tests de bout en bout                                   | Apache 2.0                         |
+| [TypeScript](https://www.typescriptlang.org)                                                                                                   | Typage                                                  | Apache 2.0                         |
 
 Les textes complets de ces licences sont fournis avec chaque paquet (dossier `node_modules` après `npm install`).
 

@@ -30,6 +30,7 @@ const READY: Record<string, string> = {
   overview: 'x-vue-echarts svg',
   traffic: 'x-vue-echarts svg',
   pages: 'table th[scope="row"]',
+  locations: 'x-vue-echarts svg',
 }
 
 for (const [name, ready] of Object.entries(READY)) {

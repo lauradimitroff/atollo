@@ -4,6 +4,7 @@ import { useTheme } from '@/shared/composables/useTheme'
 
 export interface ChartTokens {
   surface: string
+  surfaceMuted: string
   line: string
   lineStrong: string
   fg: string
@@ -33,6 +34,7 @@ export function useChartTheme() {
     const v = (name: string) => style.getPropertyValue(`--${name}`).trim()
     return {
       surface: v('surface'),
+      surfaceMuted: v('surface-muted'),
       line: v('line'),
       lineStrong: v('line-strong'),
       fg: v('fg'),
