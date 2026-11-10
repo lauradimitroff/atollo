@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Check, ChevronsUpDown, LayoutGrid } from '@lucide/vue'
+import { Check, ChevronsUpDown, LayoutGrid, Plus } from '@lucide/vue'
 
+import { useAuthStore } from '@/features/auth/auth.store'
 import BaseDropdownMenu from '@/shared/ui/BaseDropdownMenu.vue'
 import BaseDropdownMenuItem from '@/shared/ui/BaseDropdownMenuItem.vue'
 import BaseDropdownMenuLabel from '@/shared/ui/BaseDropdownMenuLabel.vue'
@@ -10,10 +12,12 @@ import SiteFavicon from './SiteFavicon.vue'
 
 const { sites, site, switchSite } = useCurrentSite()
 const router = useRouter()
+const auth = useAuthStore()
+const canAdd = computed(() => !auth.user?.isDemo)
 </script>
 
 <template>
-  <BaseDropdownMenu match-trigger-width>
+  <BaseDropdownMenu v-if="site" match-trigger-width>
     <template #trigger>
       <button
         type="button"
@@ -40,5 +44,20 @@ const router = useRouter()
     <BaseDropdownMenuItem @select="router.push({ name: 'sites' })">
       <LayoutGrid aria-hidden="true" />Tous les sites
     </BaseDropdownMenuItem>
+    <BaseDropdownMenuItem v-if="canAdd" @select="router.push({ name: 'settings-sites' })">
+      <Plus aria-hidden="true" />Ajouter un site
+    </BaseDropdownMenuItem>
   </BaseDropdownMenu>
+
+  <!-- A new account has no site yet: the switcher becomes the way to add one. -->
+  <RouterLink
+    v-else
+    :to="{ name: 'settings-sites' }"
+    class="flex w-full items-center gap-2.5 rounded-lg border border-dashed border-line-strong p-2 text-[13px] text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
+  >
+    <span class="grid size-6 place-items-center rounded-md border border-line bg-surface">
+      <Plus class="size-3.5" aria-hidden="true" />
+    </span>
+    Ajouter un site
+  </RouterLink>
 </template>

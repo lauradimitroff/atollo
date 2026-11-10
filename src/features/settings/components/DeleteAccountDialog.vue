@@ -16,6 +16,7 @@ import { useAuthStore } from '@/features/auth/auth.store'
 import FormAlert from '@/features/auth/components/FormAlert.vue'
 import { authErrorMessage } from '@/features/auth/messages'
 import { accountDeletionSchema } from '@/features/auth/schemas'
+import { useSitesStore } from '@/features/sites/sites.store'
 import { useZodForm } from '@/shared/composables/useZodForm'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseField from '@/shared/ui/BaseField.vue'
@@ -29,6 +30,7 @@ import BasePasswordInput from '@/shared/ui/BasePasswordInput.vue'
 defineProps<{ disabled?: boolean }>()
 
 const auth = useAuthStore()
+const sites = useSitesStore()
 const router = useRouter()
 const open = ref(false)
 
@@ -39,7 +41,10 @@ const { values, errors, formError, submitting, reset, handleSubmit } = useZodFor
 )
 
 const onSubmit = handleSubmit(async (data) => {
+  const ownerId = auth.user!.id
   await auth.deleteAccount(data)
+  // Its sites go with it. A real database would cascade the deletion by itself.
+  await sites.removeAllOf(ownerId)
   open.value = false
   await router.replace({ name: 'login', query: { deleted: '1' } })
 })

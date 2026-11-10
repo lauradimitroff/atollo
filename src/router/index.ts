@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { findSite } from '@/features/sites/demo-sites'
+import { useSitesStore } from '@/features/sites/sites.store'
 
 /** Analytics pages, all scoped to a site: /s/:siteId/<page>. */
 const analyticsRoutes: RouteRecordRaw[] = [
@@ -152,14 +152,16 @@ router.beforeEach(async (to) => {
     return { name: 'login', query: redirect ? { redirect } : {} }
   }
   if (to.meta.guestOnly && auth.isAuthenticated) return { name: 'sites' }
+  // Every app page shows the sites of the account (switcher, home…): load them first.
+  if (to.meta.requiresAuth) await useSitesStore().load()
 })
 
-// Unknown site id → 404 instead of an empty dashboard.
+// Site id unknown, or of another account → 404 instead of an empty dashboard.
 // A global guard (not `beforeEnter`) because `beforeEnter` does not run again
 // when only the params change, e.g. /s/site-a/overview → /s/site-b/overview.
 router.beforeEach((to) => {
   const { siteId } = to.params
-  if (typeof siteId === 'string' && !findSite(siteId)) {
+  if (typeof siteId === 'string' && !useSitesStore().find(siteId)) {
     return { name: 'not-found', params: { pathMatch: to.path.slice(1).split('/') } }
   }
 })

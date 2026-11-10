@@ -4,7 +4,7 @@ import type { Site } from './types'
  * Demo workspace sites.
  * Fictional businesses on reserved `.example` domains (RFC 2606): they cannot belong
  * to anyone, so the demo never shows made-up statistics for a real website.
- * Temporary source of truth until sites are stored per user account.
+ * They belong to the demo account only; other accounts start with no site.
  */
 export const DEMO_SITES: readonly Site[] = [
   { id: 'atelier-nord', name: 'Atelier Nord', domain: 'atelier-nord.example' },
@@ -17,7 +17,3 @@ export const DEMO_SITES: readonly Site[] = [
   // Just added: the tracking script is not installed yet.
   { id: 'maison-tilleul', name: 'Maison Tilleul', domain: 'maison-tilleul.example' },
 ]
-
-export function findSite(id: string): Site | undefined {
-  return DEMO_SITES.find((site) => site.id === id)
-}

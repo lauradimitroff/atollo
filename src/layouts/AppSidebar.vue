@@ -35,25 +35,26 @@ function isActive(item: NavItem, linkActive: boolean) {
   return item.activePrefix ? route.path.startsWith(item.activePrefix) : linkActive
 }
 
-const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
-  const params = { siteId: site.value.id }
+function analyticsSection(siteId: string) {
+  const params = { siteId }
   // Analytics links carry the period and filters, so moving between pages keeps them.
   const query = { ...periodQuery.value, ...filtersQuery.value }
+  return {
+    title: 'Analyse',
+    items: [
+      { label: 'Vue d’ensemble', icon: LayoutGrid, to: { name: 'overview', params, query } },
+      { label: 'Trafic', icon: Activity, to: { name: 'traffic', params, query } },
+      { label: 'Pages', icon: FileText, to: { name: 'pages', params, query } },
+      { label: 'Localisation', icon: Globe, to: { name: 'locations', params, query } },
+      { label: 'Appareils', icon: MonitorSmartphone, to: { name: 'devices', params, query } },
+    ],
+  }
+}
+
+const sections = computed<{ title: string; items: NavItem[] }[]>(() => {
   return [
-    {
-      title: 'Analyse',
-      items: [
-        { label: 'Vue d’ensemble', icon: LayoutGrid, to: { name: 'overview', params, query } },
-        { label: 'Trafic', icon: Activity, to: { name: 'traffic', params, query } },
-        { label: 'Pages', icon: FileText, to: { name: 'pages', params, query } },
-        { label: 'Localisation', icon: Globe, to: { name: 'locations', params, query } },
-        {
-          label: 'Appareils',
-          icon: MonitorSmartphone,
-          to: { name: 'devices', params, query },
-        },
-      ],
-    },
+    // No site yet: nothing to analyze.
+    ...(site.value ? [analyticsSection(site.value.id)] : []),
     {
       title: 'Espace',
       items: [

@@ -4,6 +4,7 @@
  * most visited first. The core of Atollo for freelancers and agencies.
  */
 import { computed } from 'vue'
+import { Globe } from '@lucide/vue'
 
 import MetricChange from '@/features/analytics/components/MetricChange.vue'
 import { useAnalyticsQuery } from '@/features/analytics/composables/useAnalyticsQuery'
@@ -12,17 +13,21 @@ import { analytics, type SiteSummary } from '@/features/analytics/data'
 import { compare } from '@/features/analytics/domain/metrics'
 import { formatNumber } from '@/shared/lib/format'
 import BaseSkeleton from '@/shared/ui/BaseSkeleton.vue'
+import EmptyState from '@/shared/ui/EmptyState.vue'
 import ErrorState from '@/shared/ui/ErrorState.vue'
 import SiteCard from '../components/SiteCard.vue'
-import { DEMO_SITES } from '../demo-sites'
+import { useSitesStore } from '../sites.store'
 
+const store = useSitesStore()
 const { query: periodQuery } = usePeriod()
 
-const summaries = useAnalyticsQuery((q) =>
-  analytics.getSiteSummaries(
-    q,
-    DEMO_SITES.map((site) => site.id),
-  ),
+const summaries = useAnalyticsQuery(
+  (q) =>
+    analytics.getSiteSummaries(
+      q,
+      store.sites.map((site) => site.id),
+    ),
+  () => store.sites,
 )
 
 const byId = computed(
@@ -31,7 +36,7 @@ const byId = computed(
 
 // Most visited first; while loading, keep the workspace order.
 const sortedSites = computed(() =>
-  [...DEMO_SITES].sort(
+  [...store.sites].sort(
     (a, b) =>
       (byId.value.get(b.id)?.visitors.current ?? 0) - (byId.value.get(a.id)?.visitors.current ?? 0),
   ),
@@ -51,14 +56,29 @@ const total = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
+  <!-- A new account: the first step is to add a site. -->
+  <EmptyState
+    v-if="store.sites.length === 0"
+    :icon="Globe"
+    title="Ajoutez votre premier site"
+    description="Donnez son nom et son domaine : Atollo vous fournit le code de suivi à installer."
+  >
+    <RouterLink
+      :to="{ name: 'settings-sites' }"
+      class="inline-flex h-8 items-center rounded-lg bg-fg px-3 text-[13px] font-medium text-canvas transition-colors hover:bg-fg/90"
+    >
+      Ajouter un site
+    </RouterLink>
+  </EmptyState>
+
+  <div v-else class="flex flex-col gap-5">
     <section
       class="flex flex-wrap items-end justify-between gap-4 rounded-xl border border-line bg-surface px-5 py-4 shadow-xs"
       aria-label="Résumé de l’espace"
     >
       <div>
         <p class="text-label text-[10px]">Sites suivis</p>
-        <p class="mt-2 font-mono text-2xl leading-none font-medium">{{ DEMO_SITES.length }}</p>
+        <p class="mt-2 font-mono text-2xl leading-none font-medium">{{ store.sites.length }}</p>
       </div>
       <div class="text-right">
         <p class="text-label text-[10px]">Visiteurs, tous sites confondus</p>

@@ -2,22 +2,24 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { withoutFilters } from '@/features/analytics/domain/filters'
-import { DEMO_SITES, findSite } from '../demo-sites'
+import { useSitesStore } from '../sites.store'
 
 /**
  * The site being viewed, derived from the URL (`/s/:siteId/...`).
  * The URL is the source of truth: reload, share or go back and the right site shows.
- * Outside a site page (settings, sites list) it falls back to the first site.
+ * Outside a site page (settings, sites list) it falls back to the first site of the
+ * account, and to null for an account that has none yet.
  */
 export function useCurrentSite() {
   const route = useRoute()
   const router = useRouter()
+  const store = useSitesStore()
 
-  const sites = DEMO_SITES
+  const sites = computed(() => store.sites)
 
   const site = computed(() => {
     const id = route.params.siteId
-    return (typeof id === 'string' && findSite(id)) || sites[0]!
+    return (typeof id === 'string' && store.find(id)) || store.sites[0] || null
   })
 
   /**

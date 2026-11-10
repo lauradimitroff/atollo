@@ -22,7 +22,7 @@ describe('useCurrentSite', () => {
   it('reads the site from the URL', async () => {
     await router.push('/s/studio-brume/pages')
     const { site } = setup()
-    expect(site.value.name).toBe('Studio Brume')
+    expect(site.value?.name).toBe('Studio Brume')
   })
 
   it('keeps the current page and query when switching site', async () => {
@@ -32,7 +32,7 @@ describe('useCurrentSite', () => {
     await switchSite('mie-celeste')
 
     expect(router.currentRoute.value.fullPath).toBe('/s/mie-celeste/traffic?period=7d')
-    expect(site.value.id).toBe('mie-celeste')
+    expect(site.value?.id).toBe('mie-celeste')
   })
 
   it('goes to the overview when switching from a non-site page', async () => {

@@ -38,7 +38,8 @@ export function useAnalyticsQuery<T>(
   const { filters } = useFilters()
 
   const query = computed<AnalyticsQuery>(() => ({
-    siteId: site.value.id,
+    // Analytics pages only open for a known site (router guard): never empty there.
+    siteId: site.value?.id ?? '',
     range: range.value,
     comparisonRange: comparisonRange.value,
     granularity: granularity.value,

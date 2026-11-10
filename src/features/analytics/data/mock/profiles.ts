@@ -520,7 +520,10 @@ export const PROFILES: Record<string, SiteProfile> = {
   },
 }
 
-/** Sites created later by the user get a small, generic profile. */
+/**
+ * Sites added by an account get no visit at all: their tracking script does not exist
+ * yet, and inventing statistics for what may be a real website would be misleading.
+ */
 export function profileFor(siteId: string): SiteProfile {
-  return PROFILES[siteId] ?? { ...ATELIER_NORD, dailySessions: 45 }
+  return PROFILES[siteId] ?? { ...ATELIER_NORD, dailySessions: 0 }
 }
