@@ -33,7 +33,8 @@ const toSite = ({ id, name, domain }: StoredSite): Site => ({ id, name, domain }
 
 export function createMockSitesService({
   storage = localStorage,
-  latency = 300,
+  // Short: every app page waits for this list (router guard), as for a real round trip.
+  latency = 150,
 }: MockSitesOptions = {}): SitesService {
   const delay = () => new Promise((resolve) => setTimeout(resolve, latency))
 

@@ -22,12 +22,14 @@ const canAdd = computed(() => !auth.user?.isDemo)
       <button
         type="button"
         class="flex w-full items-center gap-2.5 rounded-lg border border-line bg-surface p-2 text-left shadow-xs transition-colors hover:bg-surface-muted"
-        :aria-label="`Site actuel : ${site.name}. Changer de site`"
       >
         <SiteFavicon :name="site.name" />
+        <!-- The name keeps the visible text (voice control users say what they see). -->
         <span class="min-w-0 flex-1 leading-tight">
+          <span class="sr-only">Site actuel : </span>
           <span class="block truncate text-[13px] font-medium">{{ site.name }}</span>
           <span class="block truncate text-xs text-fg-muted">{{ site.domain }}</span>
+          <span class="sr-only">, changer de site</span>
         </span>
         <ChevronsUpDown class="size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
       </button>

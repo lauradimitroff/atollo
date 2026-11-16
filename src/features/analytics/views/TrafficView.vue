@@ -22,7 +22,10 @@ import { bucketLabels, formatAxis, formatMetric } from '../format'
 
 const StackedAreaChart = lazyChart(() => import('@/shared/charts/StackedAreaChart.vue'))
 
-const { granularity } = usePeriod()
+const { granularity, range } = usePeriod()
+
+// While the period is running, its last point (this hour, day or month) is incomplete.
+const periodRunning = computed(() => range.value.end.getTime() > Date.now())
 const filters = useFilters()
 
 const series = useAnalyticsQuery((q) => analytics.getChannelTimeseries(q))
@@ -121,6 +124,7 @@ const channelFilter = (channel: string) => ({ dimension: 'channel' as const, val
           title="Visites par canal"
           :format-value="(v: number) => formatMetric('visits', v)"
           :format-axis="(v: number) => formatAxis('visits', v)"
+          :last-is-partial="periodRunning"
         />
       </div>
     </section>

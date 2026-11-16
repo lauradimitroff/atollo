@@ -10,6 +10,7 @@ import {
   toDayString,
   type PeriodPreset,
 } from '@/features/analytics/domain/period'
+import { useSitesStore } from '@/features/sites/sites.store'
 import { formatDateRange } from '@/shared/lib/format'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseDateRangePicker, { type DayRange } from '@/shared/ui/BaseDateRangePicker.vue'
@@ -21,8 +22,13 @@ defineEmits<{ openMenu: [] }>()
 const route = useRoute()
 const { period, range, setPreset, setPeriod } = usePeriod()
 
-// Pages driven by the period: a site's analytics, and the multi-site overview.
-const showPeriod = computed(() => typeof route.params.siteId === 'string' || route.name === 'sites')
+// Pages driven by the period: a site's analytics, and the multi-site overview
+// (unless the account has no site yet: there is nothing to pick a period for).
+const sites = useSitesStore()
+const showPeriod = computed(
+  () =>
+    typeof route.params.siteId === 'string' || (route.name === 'sites' && sites.sites.length > 0),
+)
 
 const periodOptions: { value: PeriodPreset; label: string }[] = [
   { value: 'today', label: 'Aujourd’hui' },

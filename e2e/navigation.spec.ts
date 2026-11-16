@@ -15,7 +15,7 @@ test.describe('desktop navigation', { tag: '@desktop' }, () => {
     await expect(page).toHaveURL('/s/atelier-nord/pages')
     await expect(page).toHaveTitle('Pages · Atollo')
 
-    await page.getByRole('button', { name: /Changer de site/ }).click()
+    await page.getByRole('button', { name: /changer de site/ }).click()
     await page.getByRole('menuitem', { name: 'Studio Brume' }).click()
     await expect(page).toHaveURL('/s/studio-brume/pages')
   })

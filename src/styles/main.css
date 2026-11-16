@@ -29,7 +29,7 @@
   /* Text */
   --fg: #0e1533;
   --fg-muted: #5b6683;
-  --fg-subtle: #929bb3;
+  --fg-subtle: #646e8b;
 
   /* Brand: analogous trio, darkened for contrast on white */
   --accent: #2b8fcb;
@@ -70,7 +70,7 @@
 
   --fg: #eef1ff;
   --fg-muted: #9aa3c7;
-  --fg-subtle: #646d96;
+  --fg-subtle: #7c85ac;
 
   /* Brand: the analogous trio as is */
   --accent: #79bfe7;

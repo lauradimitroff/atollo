@@ -12,6 +12,7 @@ import type { ComposeOption } from 'echarts/core'
 import type { LineSeriesOption } from 'echarts/charts'
 import type {
   GridComponentOption,
+  MarkAreaComponentOption,
   TooltipComponentOption,
   XAXisComponentOption,
   YAXisComponentOption,
@@ -34,11 +35,26 @@ const props = defineProps<{
   title: string
   formatValue: (value: number) => string
   formatAxis: (value: number) => string
+  /**
+   * The last category with data is still in progress (this hour, day…): its low total
+   * would look like a sudden drop, so it is veiled and labelled "en cours".
+   */
+  lastIsPartial?: boolean
 }>()
+
+/** Index of the in-progress category, or -1. */
+const partialIndex = computed(() => {
+  if (!props.lastIsPartial) return -1
+  for (let i = props.categories.length - 1; i >= 0; i--) {
+    if (props.series.some((s) => s.values[i] !== null && s.values[i] !== undefined)) return i
+  }
+  return -1
+})
 
 type ChartOption = ComposeOption<
   | LineSeriesOption
   | GridComponentOption
+  | MarkAreaComponentOption
   | TooltipComponentOption
   | XAXisComponentOption
   | YAXisComponentOption
@@ -58,7 +74,9 @@ function tooltipHtml(index: number) {
   const rows = props.series.map((s) => ({ s, value: s.values[index] ?? 0 })).reverse() // same order as the stack, top first
   const total = rows.reduce((sum, r) => sum + r.value, 0)
   return `<div style="font-family:${SANS};font-size:12px;min-width:200px">
-    <div style="color:${t.fgMuted};margin-bottom:6px">${category.tooltipLabel}</div>
+    <div style="color:${t.fgMuted};margin-bottom:6px">${category.tooltipLabel}${
+      index === partialIndex.value ? ' · en cours' : ''
+    }</div>
     ${rows
       .map(
         ({
@@ -76,6 +94,47 @@ function tooltipHtml(index: number) {
       Total<b style="font-family:${MONO};font-weight:500;color:${t.fg}">${props.formatValue(total)}</b>
     </div>
   </div>`
+}
+
+/**
+ * The in-progress segment, veiled: a flat, unstacked area drawn above the stack,
+ * as high as the largest total. (A mark area would be drawn under the areas.)
+ */
+function veil(): LineSeriesOption[] {
+  const index = partialIndex.value
+  if (index <= 0) return []
+  const t = tokens.value
+  const totals = props.categories.map((_, i) =>
+    props.series.reduce((sum, s) => sum + (s.values[i] ?? 0), 0),
+  )
+  const top = Math.max(...totals)
+  const area: [{ xAxis: number }, { xAxis: number }] = [{ xAxis: index - 1 }, { xAxis: index }]
+  return [
+    {
+      type: 'line',
+      data: totals.map((_, i) => (i >= index - 1 && i <= index ? top : null)),
+      z: 10,
+      silent: true,
+      showSymbol: false,
+      lineStyle: { opacity: 0 },
+      areaStyle: { color: withAlpha(t.surface, 0.6) },
+      tooltip: { show: false },
+      // Only for its label: the veil itself is the area above.
+      markArea: {
+        silent: true,
+        itemStyle: { color: 'transparent' },
+        label: {
+          show: true,
+          position: 'insideTop',
+          color: t.fgMuted,
+          fontFamily: SANS,
+          fontSize: 11,
+          formatter: 'en cours',
+        },
+        data: [area],
+      },
+    },
+  ]
 }
 
 const option = computed<ChartOption>(() => {
@@ -117,18 +176,21 @@ const option = computed<ChartOption>(() => {
       axisLabel: { color: t.fgSubtle, fontFamily: MONO, fontSize: 11, formatter: props.formatAxis },
       splitLine: { lineStyle: { color: t.line, type: [3, 4] } },
     },
-    series: props.series.map((s) => ({
-      name: s.name,
-      type: 'line',
-      stack: 'total',
-      data: s.values,
-      smooth: 0.25,
-      showSymbol: false,
-      lineStyle: { width: 1.25, color: color(s.colorIndex) },
-      itemStyle: { color: color(s.colorIndex) },
-      areaStyle: { color: withAlpha(color(s.colorIndex), 0.55) },
-      emphasis: { focus: 'series' },
-    })),
+    series: [
+      ...props.series.map((s): LineSeriesOption => ({
+        name: s.name,
+        type: 'line',
+        stack: 'total',
+        data: s.values,
+        smooth: 0.25,
+        showSymbol: false,
+        lineStyle: { width: 1.25, color: color(s.colorIndex) },
+        itemStyle: { color: color(s.colorIndex) },
+        areaStyle: { color: withAlpha(color(s.colorIndex), 0.55) },
+        emphasis: { focus: 'series' },
+      })),
+      ...veil(),
+    ],
   }
 })
 </script>

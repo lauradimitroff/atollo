@@ -29,7 +29,6 @@ async function signOut() {
       <button
         type="button"
         class="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-surface-muted data-[state=open]:bg-surface-muted"
-        aria-label="Menu du compte"
       >
         <span
           class="grid size-7 shrink-0 place-items-center rounded-full border border-line bg-surface-muted text-[11px] font-semibold text-fg-muted"
@@ -42,6 +41,8 @@ async function signOut() {
           <span class="block truncate text-xs text-fg-muted">
             {{ user.isDemo ? 'Données fictives' : user.email }}
           </span>
+          <!-- The name keeps the visible text (voice control users say what they see). -->
+          <span class="sr-only">, menu du compte</span>
         </span>
         <ChevronsUpDown class="size-3.5 shrink-0 text-fg-subtle" aria-hidden="true" />
       </button>

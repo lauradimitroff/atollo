@@ -65,7 +65,13 @@ const sort = computed<SortState<PageColumn>>({
       @retry="pages.reload()"
     />
 
-    <div v-else-if="!pages.data.value" class="flex flex-col gap-3 p-5" aria-label="Chargement">
+    <div
+      v-else-if="!pages.data.value"
+      class="flex flex-col gap-3 p-5"
+      role="status"
+      aria-busy="true"
+      aria-label="Chargement des pages"
+    >
       <BaseSkeleton v-for="n in 8" :key="n" class="h-7" />
     </div>
 

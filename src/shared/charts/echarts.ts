@@ -6,7 +6,7 @@
  */
 import { use } from 'echarts/core'
 import { LineChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent } from 'echarts/components'
+import { GridComponent, MarkAreaComponent, TooltipComponent } from 'echarts/components'
 import { SVGRenderer } from 'echarts/renderers'
 
-use([LineChart, GridComponent, TooltipComponent, SVGRenderer])
+use([LineChart, GridComponent, MarkAreaComponent, TooltipComponent, SVGRenderer])

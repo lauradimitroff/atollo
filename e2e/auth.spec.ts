@@ -38,7 +38,7 @@ test('an account can be created, signed out of and signed in again', async ({ pa
   await page.getByRole('button', { name: 'Créer mon compte' }).click()
 
   await expect(page).toHaveURL('/sites')
-  const account = page.getByRole('button', { name: 'Menu du compte' })
+  const account = page.getByRole('button', { name: /menu du compte/ })
 
   await showSidebar(page, isMobile)
   await expect(account).toContainText('alex@studio.example')

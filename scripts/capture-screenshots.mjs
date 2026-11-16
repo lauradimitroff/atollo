@@ -20,36 +20,45 @@ const SHOTS = [
 await mkdir(OUT_DIR, { recursive: true })
 const browser = await chromium.launch()
 
-for (const theme of ['light', 'dark']) {
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 },
-    deviceScaleFactor: 2,
-    colorScheme: theme,
-    reducedMotion: 'reduce',
-  })
-  // Signed in to the demo account, with the theme chosen (same keys as the app).
-  await context.addInitScript((value) => {
-    localStorage.setItem('atollo-session', JSON.stringify({ userId: 'demo' }))
-    localStorage.setItem('atollo-theme', value)
-  }, theme)
-  const page = await context.newPage()
+// Each screen twice: 2560 px wide for high-density displays, 1280 px for the others
+// (the page picks one with srcset, so a regular screen downloads 3 to 4 times less).
+const VARIANTS = [
+  { scale: 2, suffix: '' },
+  { scale: 1, suffix: '-1280' },
+]
 
-  for (const shot of SHOTS) {
-    await page.goto(BASE_URL + shot.path)
-    await page.waitForLoadState('networkidle')
-    // Development overlays (Vue devtools) have nothing to do in a screenshot.
-    await page.addStyleTag({
-      content: '#__vue-devtools-container__, #vue-inspector-container { display: none !important }',
+for (const theme of ['light', 'dark'])
+  for (const { scale, suffix } of VARIANTS) {
+    const context = await browser.newContext({
+      viewport: { width: 1280, height: 800 },
+      deviceScaleFactor: scale,
+      colorScheme: theme,
+      reducedMotion: 'reduce',
     })
-    // Wait until every skeleton is gone and the charts are drawn.
-    await page.waitForFunction(() => !document.querySelector('[aria-busy="true"]'))
-    await page.waitForTimeout(800)
-    const file = new URL(`${shot.name}-${theme}.jpg`, OUT_DIR)
-    await page.screenshot({ path: file.pathname, type: 'jpeg', quality: 82 })
-    console.log(`✓ ${shot.name}-${theme}.jpg`)
+    // Signed in to the demo account, with the theme chosen (same keys as the app).
+    await context.addInitScript((value) => {
+      localStorage.setItem('atollo-session', JSON.stringify({ userId: 'demo' }))
+      localStorage.setItem('atollo-theme', value)
+    }, theme)
+    const page = await context.newPage()
+
+    for (const shot of SHOTS) {
+      await page.goto(BASE_URL + shot.path)
+      await page.waitForLoadState('networkidle')
+      // Development overlays (Vue devtools) have nothing to do in a screenshot.
+      await page.addStyleTag({
+        content:
+          '#__vue-devtools-container__, #vue-inspector-container { display: none !important }',
+      })
+      // Wait until every skeleton is gone and the charts are drawn.
+      await page.waitForFunction(() => !document.querySelector('[aria-busy="true"]'))
+      await page.waitForTimeout(800)
+      const name = `${shot.name}-${theme}${suffix}.jpg`
+      await page.screenshot({ path: new URL(name, OUT_DIR).pathname, type: 'jpeg', quality: 82 })
+      console.log(`✓ ${name}`)
+    }
+    await context.close()
   }
-  await context.close()
-}
 
 // Link preview image (LinkedIn, Slack…): the top of the home page, signed out,
 // at the 1200 × 630 size social networks expect.

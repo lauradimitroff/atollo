@@ -220,7 +220,12 @@ const linkButton =
         <div class="rounded-2xl bg-brand-gradient p-px shadow-pop">
           <div class="overflow-hidden rounded-[15px] bg-surface">
             <img
-              src="/screenshots/overview-light.jpg"
+              src="/screenshots/overview-light-1280.jpg"
+              srcset="
+                /screenshots/overview-light-1280.jpg 1280w,
+                /screenshots/overview-light.jpg      2560w
+              "
+              sizes="(min-width: 1152px) 1088px, calc(100vw - 2rem)"
               width="2560"
               height="1600"
               fetchpriority="high"
@@ -229,7 +234,12 @@ const linkButton =
             />
             <!-- Hidden images with loading="lazy" are not downloaded: one theme only. -->
             <img
-              src="/screenshots/overview-dark.jpg"
+              src="/screenshots/overview-dark-1280.jpg"
+              srcset="
+                /screenshots/overview-dark-1280.jpg 1280w,
+                /screenshots/overview-dark.jpg      2560w
+              "
+              sizes="(min-width: 1152px) 1088px, calc(100vw - 2rem)"
               width="2560"
               height="1600"
               loading="lazy"
@@ -250,7 +260,7 @@ const linkButton =
         aria-labelledby="features-title"
       >
         <div class="max-w-2xl">
-          <p class="text-label text-[10px] text-accent">Fonctionnalités</p>
+          <p class="text-label text-[10px] text-grad-a">Fonctionnalités</p>
           <h2 id="features-title" class="mt-3 text-3xl font-semibold tracking-tight text-balance">
             L’essentiel de votre audience, rien de superflu
           </h2>
@@ -289,7 +299,9 @@ const linkButton =
           </div>
           <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-pop">
             <img
-              :src="`/screenshots/${item.image}-light.jpg`"
+              :src="`/screenshots/${item.image}-light-1280.jpg`"
+              :srcset="`/screenshots/${item.image}-light-1280.jpg 1280w, /screenshots/${item.image}-light.jpg 2560w`"
+              sizes="(min-width: 1024px) 620px, calc(100vw - 2rem)"
               width="2560"
               height="1600"
               loading="lazy"
@@ -297,7 +309,9 @@ const linkButton =
               :alt="item.alt"
             />
             <img
-              :src="`/screenshots/${item.image}-dark.jpg`"
+              :src="`/screenshots/${item.image}-dark-1280.jpg`"
+              :srcset="`/screenshots/${item.image}-dark-1280.jpg 1280w, /screenshots/${item.image}-dark.jpg 2560w`"
+              sizes="(min-width: 1024px) 620px, calc(100vw - 2rem)"
               width="2560"
               height="1600"
               loading="lazy"
@@ -318,7 +332,7 @@ const linkButton =
           class="grid gap-10 rounded-2xl border border-line bg-surface p-6 shadow-xs sm:p-10 lg:grid-cols-2"
         >
           <div>
-            <p class="text-label text-[10px] text-accent">Sous le capot</p>
+            <p class="text-label text-[10px] text-grad-a">Sous le capot</p>
             <h2 id="tech-title" class="mt-3 text-3xl font-semibold tracking-tight text-balance">
               Un projet de portfolio, construit comme un vrai produit
             </h2>
